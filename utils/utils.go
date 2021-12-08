@@ -22,6 +22,13 @@ func CreateRandomGraphScript(n int, p float64) string {
   return query
 }
 
-func getRandomNode(n int) int {
-  return rand.Intn(n)
+// Returns a neo4j query that searches for two disjoint paths between
+// two random pairs of nodes
+func RandomTwoDisjointPathQuery (n int) string {
+    return fmt.Sprintf(`MATCH p1 = (s1)-[:Edge*]-(t1)
+    WHERE id(s1)=%d AND id(t1)=%d
+    MATCH p2 = (s2)-[:Edge*]-(t2)
+    WHERE id(s2)=%d AND id(t2)=%d
+    AND none(r in relationships(p2) WHERE r in relationships(p1))
+    RETURN p1, p2`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
 }
