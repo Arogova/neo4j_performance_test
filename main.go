@@ -14,19 +14,24 @@ func checkErr(err error) {
   }
 }
 
+
 // Executes two disjoint paths between two random pairs of nodes on current graph
-// Sends execution time to channel c
-func executeRandomTwoDisjointPath (driver neo4j.Driver, n int, resChan chan time.Duration) {
+// Sends number of results to channel c
+func executeRandomTwoDisjointPath (driver neo4j.Driver, n int, resChan chan int) {
   session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
   defer session.Close()
   result, err := session.ReadTransaction(func (tx neo4j.Transaction) (interface{}, error)  {
     result, err := tx.Run(utils.RandomTwoDisjointPathQuery(n), nil)
     checkErr(err)
-    summary, err := result.Consume()
-    return summary.ResultAvailableAfter(), err
+    result_count := 0
+    for result.Next() {
+      result.Record()
+      result_count+=1
+    }
+    return result_count, err
   })
   checkErr(err)
-  resChan <- result.(time.Duration)
+  resChan <- result.(int)
 }
 
 func createRandomGraph (driver neo4j.Driver, n int, p float64)  {
@@ -46,19 +51,20 @@ func testSuite (driver neo4j.Driver) {
   resultFile, err := os.Create("results/"+time.Now().Format(timeLayout)+".csv")
   checkErr(err)
   defer resultFile.Close()
-  _, err = resultFile.WriteString("order, edge probability, query execution time \n")
+  _, err = resultFile.WriteString("order,edge probability,query execution time,number of results\n")
   for p:= 0.1; p < 1; p+=0.1 {
-    for n:=10; n <= 500; n+=10 {
-      for i:=0; i<10; i++ {
+    for n:=10; n <= 300; n+=10 {
+      for i:=0; i<5; i++ {
         createRandomGraph(driver, n, p)
-        c := make(chan time.Duration, 1)
+        c := make(chan int, 1)
         go executeRandomTwoDisjointPath(driver, n, c)
+        start_time := time.Now()
         select {
         case res := <-c :
-           _, err := resultFile.WriteString(fmt.Sprintf("%d, %f, %s\n", n, p, res))
+           _, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, time.Since(start_time), res))
            checkErr(err)
-        case <-time.After(5 * time.Second) :
-          _, err := resultFile.WriteString(fmt.Sprintf("%d, %f, timeout\n", n, p))
+        case <-time.After(300 * time.Second) :
+          _, err := resultFile.WriteString(fmt.Sprintf("%d,%f,timeout,0\n", n, p))
           checkErr(err)
       }
       }
