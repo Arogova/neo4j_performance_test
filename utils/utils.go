@@ -10,7 +10,7 @@ import (
 func CreateRandomGraphScript(n int, p float64) string {
   query := ""
   for  i:=0; i<n; i++ {
-    query += fmt.Sprintf("CREATE (v%d) \n", i)
+    query += fmt.Sprintf("CREATE (v%d {name:%d})\n", i, i)
   }
   for i:=0; i<n; i++ {
     for j:=0; j<n; j++ {
@@ -25,10 +25,18 @@ func CreateRandomGraphScript(n int, p float64) string {
 // Returns a neo4j query that searches for two disjoint paths between
 // two random pairs of nodes
 func RandomTwoDisjointPathQuery (n int) string {
-    return fmt.Sprintf(`MATCH p1 = (s1)-[:Edge*]-(t1)
-    WHERE id(s1)=%d AND id(t1)=%d
-    MATCH p2 = (s2)-[:Edge*]-(t2)
-    WHERE id(s2)=%d AND id(t2)=%d
-    AND none(r in relationships(p2) WHERE r in relationships(p1))
+    return fmt.Sprintf(`MATCH p1 = (s1 {name: %d})-[:Edge*]-(t1 {name: %d})
+    MATCH p2 = (s2 {name: %d})-[:Edge*]-(t2 {name: %d})
+    WHERE none(r in relationships(p2) WHERE r in relationships(p1))
     RETURN p1, p2`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
+}
+
+func HamiltonianPath (n int) string {
+  return `MATCH (n)
+  WITH collect(n.name) AS allNodes
+  MATCH path=(s)-[:Edge*]-(t)
+  WITH path, allNodes, [y in nodes(p) | y.name] as nodesInPath
+  WHERE all(node in allNodes where node in nodesInPath)
+  ANS size(allNodes)=size(nodesInPath)
+  RETURN path`
 }
