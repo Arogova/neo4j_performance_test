@@ -31,12 +31,12 @@ func RandomTwoDisjointPathQuery (n int) string {
     RETURN p1, p2`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
 }
 
-func HamiltonianPath (n int) string {
+func HamiltonianPath () string {
   return `MATCH (n)
   WITH collect(n.name) AS allNodes
   MATCH path=(s)-[:Edge*]-(t)
-  WITH path, allNodes, [y in nodes(p) | y.name] as nodesInPath
+  WITH path, allNodes, [y in nodes(path) | y.name] as nodesInPath
   WHERE all(node in allNodes where node in nodesInPath)
-  ANS size(allNodes)=size(nodesInPath)
+  AND size(allNodes)=size(nodesInPath)
   RETURN path`
 }
