@@ -84,7 +84,7 @@ func testSuite (driver neo4j.Driver, queryType string, maxNodes int) {
             _, err = dumpFile.WriteString("\n------\n")
             checkErr(err)
           }
-           _, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, time.Since(start_time), res))
+           _, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%d,%d\n", n, p, time.Since(start_time).Milliseconds(), res))
            checkErr(err)
         case <-time.After(300 * time.Second) :
           _, err := resultFile.WriteString(fmt.Sprintf("%d,%f,timeout,0\n", n, p))
