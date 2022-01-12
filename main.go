@@ -59,6 +59,7 @@ func testSuite (driver neo4j.Driver, queryType string, maxNodes int) {
   for p:= 0.1; p < 1; p+=0.1 {
     for n:=10; n <= maxNodes; n+=10 {
       for i:=0; i<5; i++ {
+        fmt.Printf("\rCurrently computing : p=%f, n=%d (iteration %d)", p, n, i+1)
         graph := utils.CreateRandomGraphScript(n, p)
         createRandomGraph(driver, graph)
         c := make(chan int, 1)
