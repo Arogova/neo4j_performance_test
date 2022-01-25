@@ -21,7 +21,7 @@ func checkErr(err error) {
 func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
-	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+	_, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		result, err := tx.Run(queryString, nil)
 		checkErr(err)
 		result_count := 0
@@ -29,10 +29,13 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
 			result.Record()
 			result_count += 1
 		}
-		return result_count, err
+		summary, err := result.Consume()
+		checkErr(err)
+		resChan <- result_count
+		resChan <- int(summary.ResultAvailableAfter().Milliseconds())
+		return 1 , err
 	})
 	checkErr(err)
-	resChan <- result.(int)
 }
 
 func createRandomGraph(driver neo4j.Driver, graphString string) {
@@ -70,11 +73,12 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 					query = utils.HamiltonianPath()
 				}
 				go executeQuery(driver, query, c)
-				start_time := time.Now()
+				//start_time := time.Now()
 				select {
 				case res := <-c:
+					timeSpent := <- c
 					if res >= 500 {
-						_, err = dumpFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, time.Since(start_time), res))
+						_, err = dumpFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, timeSpent, res))
 						checkErr(err)
 						_, err = dumpFile.WriteString(graph)
 						checkErr(err)
@@ -86,7 +90,7 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 						checkErr(err)
 					}
 					if (!ignore){
-						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%d,%d\n", n, p, time.Since(start_time).Milliseconds(), res))
+						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%d,%d\n", n, p, timeSpent, res))
 						checkErr(err)
 					}
 				case <-time.After(300 * time.Second):
