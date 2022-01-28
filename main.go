@@ -16,6 +16,19 @@ func checkErr(err error) {
 	}
 }
 
+func writeDump (dumpFile *os.File, n int, p float64, timeSpent int, res int, graph string, query string) {
+	_, err := dumpFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, timeSpent, res))
+	checkErr(err)
+	_, err = dumpFile.WriteString(graph)
+	checkErr(err)
+	_, err = dumpFile.WriteString("\n")
+	checkErr(err)
+	_, err = dumpFile.WriteString(query)
+	checkErr(err)
+	_, err = dumpFile.WriteString("\n------\n")
+	checkErr(err)
+}
+
 // Executes the query given as argument
 // Sends number of results to channel c
 func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
@@ -78,16 +91,7 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 				case res := <-c:
 					timeSpent := <- c
 					if res >= 500 {
-						_, err = dumpFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, timeSpent, res))
-						checkErr(err)
-						_, err = dumpFile.WriteString(graph)
-						checkErr(err)
-						_, err = dumpFile.WriteString("\n")
-						checkErr(err)
-						_, err = dumpFile.WriteString(query)
-						checkErr(err)
-						_, err = dumpFile.WriteString("\n------\n")
-						checkErr(err)
+						writeDump(dumpFile, n, p, timeSpent, res, graph, query)
 					}
 					if (!ignore){
 						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%d,%d\n", n, p, timeSpent, res))
@@ -98,6 +102,7 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,timeout,0\n", n, p))
 						checkErr(err)
 					}
+					writeDump(dumpFile, n, p, -1, 0, graph, query)
 				}
 				ignore = false
 			}
