@@ -65,7 +65,7 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 			ignore := true
 			for i := 0; i < 5; i++ {
 				fmt.Printf("\rCurrently computing : p=%f, n=%d (iteration %d)", p, n, i+1)
-				c := make(chan int, 1)
+				c := make(chan int)
 				query := ""
 				if queryType == "tdp" {
 					query = utils.RandomTwoDisjointPathQuery(n)
