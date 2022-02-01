@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Arogova/neo4j_performance_test/utils"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -16,7 +17,7 @@ func checkErr(err error) {
 	}
 }
 
-func writeDump (dumpFile *os.File, n int, p float64, timeSpent int, res int, graph string, query string) {
+func writeDump(dumpFile *os.File, n int, p float64, timeSpent int, res int, graph string, query string) {
 	_, err := dumpFile.WriteString(fmt.Sprintf("%d,%f,%s,%d\n", n, p, timeSpent, res))
 	checkErr(err)
 	_, err = dumpFile.WriteString(graph)
@@ -46,7 +47,7 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
 		checkErr(err)
 		resChan <- result_count
 		resChan <- int(summary.ResultAvailableAfter().Milliseconds())
-		return 1 , err
+		return 1, err
 	})
 	checkErr(err)
 }
@@ -89,16 +90,16 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 				//start_time := time.Now()
 				select {
 				case res := <-c:
-					timeSpent := <- c
+					timeSpent := <-c
 					if res >= 500 {
 						writeDump(dumpFile, n, p, timeSpent, res, graph, query)
 					}
-					if (!ignore){
+					if !ignore {
 						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,%d,%d\n", n, p, timeSpent, res))
 						checkErr(err)
 					}
 				case <-time.After(300 * time.Second):
-					if (!ignore) {
+					if !ignore {
 						_, err := resultFile.WriteString(fmt.Sprintf("%d,%f,timeout,0\n", n, p))
 						checkErr(err)
 					}
@@ -113,12 +114,19 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 func main() {
 	query := flag.String("query", "", "The query to run. Please enter 'tdp' for two disjoint paths and 'hamil' for hamiltonian path")
 	maxNodes := flag.Int("nodes", 300, "How big the largest random graph should be")
+	randSeed := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
 
 	flag.Parse()
 	if *query == "" {
 		panic(errors.New("Please choose a query to run"))
 	} else if *query != "tdp" && *query != "hamil" {
 		panic(errors.New(*query + " is not a valid query. Please choose between 'tdp' for two disjoint paths and 'hamil' for hamiltonian path"))
+	}
+
+	if *randSeed == -1 {
+		rand.Seed(time.Now().UnixNano())
+	} else {
+		rand.Seed(*randSeed)
 	}
 
 	dbUri := "neo4j://localhost:7687"
