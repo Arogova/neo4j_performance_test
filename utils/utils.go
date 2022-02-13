@@ -28,7 +28,7 @@ func RandomTwoDisjointPathQuery(n int) string {
 	return fmt.Sprintf(`MATCH p1 = (s1 {name: %d})-[:Edge*]-(t1 {name: %d})
     MATCH p2 = (s2 {name: %d})-[:Edge*]-(t2 {name: %d})
     WHERE none(r in relationships(p2) WHERE r in relationships(p1))
-    RETURN p1, p2`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
+    RETURN p1, p2 LIMIT 1`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
 }
 
 func HamiltonianPath() string {
@@ -38,5 +38,5 @@ func HamiltonianPath() string {
   WITH path, allNodes, [y in nodes(path) | y.name] as nodesInPath
   WHERE all(node in allNodes where node in nodesInPath)
   AND size(allNodes)=size(nodesInPath)
-  RETURN path`
+  RETURN path LIMIT 1`
 }
