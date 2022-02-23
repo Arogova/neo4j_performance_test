@@ -26,7 +26,7 @@ func checkErr(err error) {
 	}
 }
 
-func writeToFile(fileLocation *os.File, data *testResult) {
+func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 	timeLayout := "15:04:05"
 	timeSpent := strconv.Itoa(data.timeSpent)
 	if timeSpent == "-1" {
@@ -35,13 +35,12 @@ func writeToFile(fileLocation *os.File, data *testResult) {
 	toWrite := fmt.Sprintf("%d,%f,%s,%s\n", data.nodes, data.probability, timeSpent, time.Now().Format(timeLayout))
 	_, err := fileLocation.WriteString(toWrite)
 	checkErr(err)
-	if timeSpent == "timeout" {
+	if dump {
 		toWrite = fmt.Sprintf("%s\n%s\n------\n", data.graph, data.query)
 		_, err = fileLocation.WriteString(toWrite)
 		checkErr(err)
 	}
 }
-
 
 // Executes the query given as argument
 // Sends number of results to channel c
@@ -104,15 +103,15 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 				case res := <-c:
 					if !ignore {
 						data := testResult{nodes: n, probability: p, timeSpent: res, graph: "", query: ""}
-						writeToFile(resultFile, &data)
+						writeToFile(resultFile, &data, false)
 					}
 				case <-time.After(300 * time.Second):
 					if !ignore {
 						data := testResult{nodes: n, probability: p, timeSpent: -1, graph: "", query: ""}
-						writeToFile(resultFile, &data)
+						writeToFile(resultFile, &data, false)
 					}
 					data := testResult{nodes: n, probability: p, timeSpent: -1, graph: graph, query: query}
-					writeToFile(dumpFile, &data)
+					writeToFile(dumpFile, &data, true)
 				}
 				ignore = false
 			}
