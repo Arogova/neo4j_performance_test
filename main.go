@@ -10,12 +10,13 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"strings"
 )
 
 type testResult struct {
 	nodes       int
 	probability float64
-	timeSpent   int
+	qExecTime   int
 	graph       string
 	query       string
 }
@@ -28,11 +29,11 @@ func checkErr(err error) {
 
 func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 	timeLayout := "15:04:05"
-	timeSpent := strconv.Itoa(data.timeSpent)
-	if timeSpent == "-1" {
-		timeSpent = "timeout"
+	qExecTime := strconv.Itoa(data.qExecTime)
+	if qExecTime == "-1" {
+		qExecTime = "timeout"
 	}
-	toWrite := fmt.Sprintf("%d,%f,%s,%s\n", data.nodes, data.probability, timeSpent, time.Now().Format(timeLayout))
+	toWrite := fmt.Sprintf("%d,%f,%s,%s\n", data.nodes, data.probability, qExecTime, time.Now().Format(timeLayout))
 	_, err := fileLocation.WriteString(toWrite)
 	checkErr(err)
 	if dump {
@@ -47,15 +48,18 @@ func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
-	_, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+	session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		result, err := tx.Run(queryString, nil)
-		checkErr(err)
 		summary, err := result.Consume()
-		checkErr(err)
-		resChan <- int(summary.ResultAvailableAfter().Milliseconds())
-		return 1, err
+		transactionTimeoutError := "Neo.ClientError.Transaction.TransactionTimedOut"
+		if err != nil && strings.Contains(err.Error(), transactionTimeoutError) {
+			resChan <- -1
+		} else {
+			checkErr(err)
+			resChan <- int(summary.ResultAvailableAfter().Milliseconds())
+		}
+		return 1, nil
 	})
-	checkErr(err)
 }
 
 func createRandomGraph(driver neo4j.Driver, graphString string) {
@@ -99,19 +103,18 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 					query = utils.HamiltonianPath()
 				}
 				go executeQuery(driver, query, c)
-				select {
-				case res := <-c:
+
+				qExecTime := <-c
+				if qExecTime == -1 {
 					if !ignore {
-						data := testResult{nodes: n, probability: p, timeSpent: res, graph: "", query: ""}
-						writeToFile(resultFile, &data, false)
-					}
-				case <-time.After(300 * time.Second):
-					if !ignore {
-						data := testResult{nodes: n, probability: p, timeSpent: -1, graph: "", query: ""}
-						writeToFile(resultFile, &data, false)
-					}
-					data := testResult{nodes: n, probability: p, timeSpent: -1, graph: graph, query: query}
-					writeToFile(dumpFile, &data, true)
+							data := testResult{nodes: n, probability: p, qExecTime: -1, graph: "", query: ""}
+							writeToFile(resultFile, &data, false)
+						}
+						data := testResult{nodes: n, probability: p, qExecTime: -1, graph: graph, query: query}
+						writeToFile(dumpFile, &data, true)
+				} else {
+					data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: "", query: ""}
+					writeToFile(resultFile, &data, false)
 				}
 				ignore = false
 			}
