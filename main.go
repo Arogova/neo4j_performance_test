@@ -9,8 +9,8 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 )
 
 type testResult struct {
@@ -107,14 +107,16 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 				qExecTime := <-c
 				if qExecTime == -1 {
 					if !ignore {
-							data := testResult{nodes: n, probability: p, qExecTime: -1, graph: "", query: ""}
-							writeToFile(resultFile, &data, false)
-						}
-						data := testResult{nodes: n, probability: p, qExecTime: -1, graph: graph, query: query}
-						writeToFile(dumpFile, &data, true)
+						data := testResult{nodes: n, probability: p, qExecTime: -1, graph: "", query: ""}
+						writeToFile(resultFile, &data, false)
+					}
 				} else {
-					data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: "", query: ""}
-					writeToFile(resultFile, &data, false)
+					if !ignore {
+						data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: "", query: ""}
+						writeToFile(resultFile, &data, false)
+					}
+					data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: graph, query: query}
+					writeToFile(dumpFile, &data, true)
 				}
 				ignore = false
 			}
