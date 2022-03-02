@@ -51,7 +51,7 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
 	session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		result, err := tx.Run(queryString, nil)
 		summary, err := result.Consume()
-		transactionTimeoutError := "Neo.ClientError.Transaction.TransactionTimedOut"
+		transactionTimeoutError := "TransactionTimedOut"
 		if err != nil && strings.Contains(err.Error(), transactionTimeoutError) {
 			resChan <- -1
 		} else {
