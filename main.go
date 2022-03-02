@@ -9,16 +9,20 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
 type testResult struct {
 	nodes       int
 	probability float64
-	qExecTime   int
+	queryResult queryResult
 	graph       string
 	query       string
+}
+
+type queryResult struct {
+	qExecTime int
+	found     bool
 }
 
 func checkErr(err error) {
@@ -29,15 +33,15 @@ func checkErr(err error) {
 
 func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 	timeLayout := "15:04:05"
-	qExecTime := strconv.Itoa(data.qExecTime)
+	qExecTime := strconv.Itoa(data.queryResult.qExecTime)
 	if qExecTime == "-1" {
 		qExecTime = "timeout"
 	}
-	toWrite := fmt.Sprintf("%d,%f,%s,%s\n", data.nodes, data.probability, qExecTime, time.Now().Format(timeLayout))
+	toWrite := fmt.Sprintf("%v,%v,%v,%v,%v\n", data.nodes, data.probability, qExecTime, data.queryResult.found, time.Now().Format(timeLayout))
 	_, err := fileLocation.WriteString(toWrite)
 	checkErr(err)
 	if dump {
-		toWrite = fmt.Sprintf("%s\n%s\n------\n", data.graph, data.query)
+		toWrite = fmt.Sprintf("%v\n%v\n------\n", data.graph, data.query)
 		_, err = fileLocation.WriteString(toWrite)
 		checkErr(err)
 	}
@@ -45,18 +49,17 @@ func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 
 // Executes the query given as argument
 // Sends number of results to channel c
-func executeQuery(driver neo4j.Driver, queryString string, resChan chan int) {
+func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryResult) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
 	session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		result, err := tx.Run(queryString, nil)
+		result, _ := tx.Run(queryString, nil)
+		records, _ := result.Collect()
 		summary, err := result.Consume()
-		transactionTimeoutError := "TransactionTimedOut"
-		if err != nil && strings.Contains(err.Error(), transactionTimeoutError) {
-			resChan <- -1
+		if err != nil {
+			resChan <- queryResult{qExecTime: -1, found: false}
 		} else {
-			checkErr(err)
-			resChan <- int(summary.ResultAvailableAfter().Milliseconds())
+			resChan <- queryResult{qExecTime: int(summary.ResultAvailableAfter().Milliseconds()), found: len(records) == 1}
 		}
 		return 1, nil
 	})
@@ -78,7 +81,7 @@ func createFiles() (*os.File, *os.File) {
 	timeLayout := "2006-02-01--15:04:05"
 	resultFile, err := os.Create("results/" + time.Now().Format(timeLayout) + ".csv")
 	checkErr(err)
-	_, err = resultFile.WriteString("order,edge probability,query execution time,timestamp\n")
+	_, err = resultFile.WriteString("order,edge probability,query execution time,found,timestamp\n")
 	dumpFile, err := os.Create("results/" + time.Now().Format(timeLayout) + "_dump.csv")
 	checkErr(err)
 	return resultFile, dumpFile
@@ -95,7 +98,7 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 			ignore := true
 			for i := 0; i < 5; i++ {
 				fmt.Printf("\rCurrently computing : p=%f, n=%d (iteration %d)", p, n, i+1)
-				c := make(chan int)
+				c := make(chan queryResult)
 				query := ""
 				if queryType == "tdp" {
 					query = utils.RandomTwoDisjointPathQuery(n)
@@ -104,18 +107,18 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 				}
 				go executeQuery(driver, query, c)
 
-				qExecTime := <-c
-				if qExecTime == -1 {
+				qRes := <-c
+				if qRes.qExecTime == -1 {
 					if !ignore {
-						data := testResult{nodes: n, probability: p, qExecTime: -1, graph: "", query: ""}
+						data := testResult{nodes: n, probability: p, queryResult: qRes, graph: "", query: ""}
 						writeToFile(resultFile, &data, false)
 					}
 				} else {
 					if !ignore {
-						data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: "", query: ""}
+						data := testResult{nodes: n, probability: p, queryResult: qRes, graph: "", query: ""}
 						writeToFile(resultFile, &data, false)
 					}
-					data := testResult{nodes: n, probability: p, qExecTime: qExecTime, graph: graph, query: query}
+					data := testResult{nodes: n, probability: p, queryResult: qRes, graph: graph, query: query}
 					writeToFile(dumpFile, &data, true)
 				}
 				ignore = false
