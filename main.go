@@ -77,18 +77,18 @@ func createRandomGraph(driver neo4j.Driver, graphString string) {
 	})
 }
 
-func createFiles() (*os.File, *os.File) {
+func createFiles(queryType string) (*os.File, *os.File) {
 	timeLayout := "2006-02-01--15:04:05"
-	resultFile, err := os.Create("results/" + time.Now().Format(timeLayout) + ".csv")
+	resultFile, err := os.Create("results/" + queryType + "_" + time.Now().Format(timeLayout) + ".csv")
 	checkErr(err)
 	_, err = resultFile.WriteString("order,edge probability,query execution time,found,timestamp\n")
-	dumpFile, err := os.Create("results/" + time.Now().Format(timeLayout) + "_dump.csv")
+	dumpFile, err := os.Create("results/" + queryType + "_" + time.Now().Format(timeLayout) + "_dump.txt")
 	checkErr(err)
 	return resultFile, dumpFile
 }
 
 func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
-	resultFile, dumpFile := createFiles()
+	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
 	for p := 0.1; p < 1; p += 0.1 {
@@ -131,6 +131,9 @@ func main() {
 	query := flag.String("query", "", "The query to run. Please enter 'tdp' for two disjoint paths and 'hamil' for hamiltonian path")
 	maxNodes := flag.Int("nodes", 300, "How big the largest random graph should be")
 	randSeed := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
+	boltPort := flag.Int64("port", 7687, "The server Bolt port. 7687 by default.")
+	username := flag.String("user", "neo4j", "'neo4j' by default.")
+	password := flag.String("pwd", "1234", "'1234' by default.")
 
 	flag.Parse()
 	if *query == "" {
@@ -145,8 +148,8 @@ func main() {
 		rand.Seed(*randSeed)
 	}
 
-	dbUri := "neo4j://localhost:7687"
-	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth("neo4j", "1234", ""))
+	dbUri := "neo4j://localhost:"+strconv.FormatInt(*boltPort, 10)
+	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*username, *password, ""))
 	checkErr(err)
 	defer driver.Close()
 	testSuite(driver, *query, *maxNodes)
