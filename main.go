@@ -25,6 +25,10 @@ type queryResult struct {
 	found     bool
 }
 
+var queryType string
+var maxNodes int
+var start_p float64
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
@@ -77,6 +81,15 @@ func createRandomGraph(driver neo4j.Driver, graphString string) {
 	})
 }
 
+func createRandomQuery (n int) string {
+	if queryType == "tdp" {
+		return utils.RandomTwoDisjointPathQuery(n)
+	} else if queryType == "hamil" {
+		return utils.HamiltonianPath()
+	}
+	return ""
+}
+
 func createFiles(queryType string) (*os.File, *os.File) {
 	timeLayout := "2006-02-01--15:04:05"
 	resultFile, err := os.Create("results/" + queryType + "_" + time.Now().Format(timeLayout) + ".csv")
@@ -87,11 +100,11 @@ func createFiles(queryType string) (*os.File, *os.File) {
 	return resultFile, dumpFile
 }
 
-func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
+func testSuite(driver neo4j.Driver) {
 	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
-	for p := 0.1; p < 1; p += 0.1 {
+	for p := start_p; p <= 1; p += 0.1 {y
 		for n := 10; n <= maxNodes; n += 10 {
 			graph := utils.CreateRandomGraphScript(n, p)
 			createRandomGraph(driver, graph)
@@ -99,14 +112,8 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 			for i := 0; i < 5; i++ {
 				fmt.Printf("\rCurrently computing : p=%f, n=%d (iteration %d)", p, n, i+1)
 				c := make(chan queryResult)
-				query := ""
-				if queryType == "tdp" {
-					query = utils.RandomTwoDisjointPathQuery(n)
-				} else if queryType == "hamil" {
-					query = utils.HamiltonianPath()
-				}
+				query := createRandomQuery(n)
 				go executeQuery(driver, query, c)
-
 				qRes := <-c
 				if qRes.qExecTime == -1 {
 					if !ignore {
@@ -128,29 +135,34 @@ func testSuite(driver neo4j.Driver, queryType string, maxNodes int) {
 }
 
 func main() {
-	query := flag.String("query", "", "The query to run. Please enter 'tdp' for two disjoint paths and 'hamil' for hamiltonian path")
-	maxNodes := flag.Int("nodes", 300, "How big the largest random graph should be")
-	randSeed := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
-	boltPort := flag.Int64("port", 7687, "The server Bolt port. 7687 by default.")
-	username := flag.String("user", "neo4j", "'neo4j' by default.")
-	password := flag.String("pwd", "1234", "'1234' by default.")
+	queryFlag := flag.String("query", "", "The query to run. Please enter 'tdp' for two disjoint paths and 'hamil' for hamiltonian path")
+	maxNodesFlag := flag.Int("nodes", 300, "How big the largest random graph should be")
+	randSeedFlag := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
+	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port. 7687 by default.")
+	usernameFlag := flag.String("user", "neo4j", "'neo4j' by default.")
+	passwordFlag := flag.String("pwd", "1234", "'1234' by default.")
+	pFlag := flag.Float64("start", 0.1, "")
 
 	flag.Parse()
-	if *query == "" {
+	if *queryFlag == "" {
 		panic(errors.New("Please choose a query to run"))
-	} else if *query != "tdp" && *query != "hamil" {
-		panic(errors.New(*query + " is not a valid query. Please choose between 'tdp' for two disjoint paths and 'hamil' for hamiltonian path"))
+	} else if *queryFlag != "tdp" && *queryFlag != "hamil" {
+		panic(errors.New(*queryFlag + " is not a valid query. Please choose between 'tdp' for two disjoint paths and 'hamil' for hamiltonian path"))
 	}
 
-	if *randSeed == -1 {
+	if *randSeedFlag == -1 {
 		rand.Seed(time.Now().UnixNano())
 	} else {
-		rand.Seed(*randSeed)
+		rand.Seed(*randSeedFlag)
 	}
 
-	dbUri := "neo4j://localhost:"+strconv.FormatInt(*boltPort, 10)
-	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*username, *password, ""))
+	start_p = *pFlag
+	queryType = *queryFlag
+	maxNodes = *maxNodesFlag
+
+	dbUri := "neo4j://localhost:"+strconv.FormatInt(*boltPortFlag, 10)
+	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
 	checkErr(err)
 	defer driver.Close()
-	testSuite(driver, *query, *maxNodes)
+	testSuite(driver)
 }
