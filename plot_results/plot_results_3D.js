@@ -106,6 +106,7 @@ inputElement = document.getElementById("input");
 inputElement.addEventListener("change", handleFiles, false);
 function handleFiles() {
   Papa.parse(this.files[0], {
+    skipEmptyLines: true,
     header: true,
     transformHeader:function(h) {
       return h.trim();
