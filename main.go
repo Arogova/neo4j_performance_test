@@ -32,11 +32,13 @@ var allowed_queries = map[string]bool{
 	"tdp":   true,
 	"hamil": true,
 	"enum":  true,
+	"any":   true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
 'hamil' : hamiltonian path
-'enum' : trail enumeration`
+'enum' : trail enumeration
+'any' : any path`
 
 func checkErr(err error) {
 	if err != nil {
@@ -97,6 +99,8 @@ func createRandomQuery(n int) string {
 		return utils.HamiltonianPath()
 	} else if queryType == "enum" {
 		return utils.EnumeratePaths(n)
+	} else if queryType == "any" {
+		return utils.FindAnyPath(n)
 	}
 	return ""
 }
