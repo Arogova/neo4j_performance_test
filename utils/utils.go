@@ -40,3 +40,8 @@ func HamiltonianPath() string {
   AND size(allNodes)=size(nodesInPath)
   RETURN path LIMIT 1`
 }
+
+func EnumeratePaths(n int) string {
+	return fmt.Sprintf(`MATCH p = ({name: %d})-[:Edge*]-({name: %d})
+		RETURN count(p)`, rand.Intn(n), rand.Intn(n))
+}

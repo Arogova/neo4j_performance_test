@@ -28,6 +28,15 @@ type queryResult struct {
 var queryType string
 var maxNodes int
 var start_p float64
+var allowed_queries = map[string]bool{
+	"tdp":   true,
+	"hamil": true,
+	"enum":  true,
+}
+var allowed_q_desc = `Available queries are :
+'tdp' : two disjoint paths
+'hamil' : hamiltonian path
+'enum' : trail enumeration`
 
 func checkErr(err error) {
 	if err != nil {
@@ -81,11 +90,13 @@ func createRandomGraph(driver neo4j.Driver, graphString string) {
 	})
 }
 
-func createRandomQuery (n int) string {
+func createRandomQuery(n int) string {
 	if queryType == "tdp" {
 		return utils.RandomTwoDisjointPathQuery(n)
 	} else if queryType == "hamil" {
 		return utils.HamiltonianPath()
+	} else if queryType == "enum" {
+		return utils.EnumeratePaths(n)
 	}
 	return ""
 }
@@ -104,7 +115,7 @@ func testSuite(driver neo4j.Driver) {
 	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
-	for p := start_p; p <= 1; p += 0.1 {y
+	for p := start_p; p <= 1; p += 0.1 {
 		for n := 10; n <= maxNodes; n += 10 {
 			graph := utils.CreateRandomGraphScript(n, p)
 			createRandomGraph(driver, graph)
@@ -135,19 +146,19 @@ func testSuite(driver neo4j.Driver) {
 }
 
 func main() {
-	queryFlag := flag.String("query", "", "The query to run. Please enter 'tdp' for two disjoint paths and 'hamil' for hamiltonian path")
+	queryFlag := flag.String("query", "", "The query to run. "+allowed_q_desc)
 	maxNodesFlag := flag.Int("nodes", 300, "How big the largest random graph should be")
 	randSeedFlag := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
-	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port. 7687 by default.")
-	usernameFlag := flag.String("user", "neo4j", "'neo4j' by default.")
-	passwordFlag := flag.String("pwd", "1234", "'1234' by default.")
+	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port.")
+	usernameFlag := flag.String("user", "neo4j", "")
+	passwordFlag := flag.String("pwd", "1234", "")
 	pFlag := flag.Float64("start", 0.1, "")
 
 	flag.Parse()
 	if *queryFlag == "" {
 		panic(errors.New("Please choose a query to run"))
-	} else if *queryFlag != "tdp" && *queryFlag != "hamil" {
-		panic(errors.New(*queryFlag + " is not a valid query. Please choose between 'tdp' for two disjoint paths and 'hamil' for hamiltonian path"))
+	} else if !allowed_queries[*queryFlag] {
+		panic(errors.New(*queryFlag + " is not a valid query. " + allowed_q_desc))
 	}
 
 	if *randSeedFlag == -1 {
@@ -160,7 +171,7 @@ func main() {
 	queryType = *queryFlag
 	maxNodes = *maxNodesFlag
 
-	dbUri := "neo4j://localhost:"+strconv.FormatInt(*boltPortFlag, 10)
+	dbUri := "neo4j://localhost:" + strconv.FormatInt(*boltPortFlag, 10)
 	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
 	checkErr(err)
 	defer driver.Close()
