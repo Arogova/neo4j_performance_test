@@ -29,16 +29,18 @@ var queryType string
 var maxNodes int
 var start_p float64
 var allowed_queries = map[string]bool{
-	"tdp":   true,
-	"hamil": true,
-	"enum":  true,
-	"any":   true,
+	"tdp":    true,
+	"hamil":  true,
+	"enum":   true,
+	"any":    true,
+	"tgfree": true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
 'hamil' : hamiltonian path
 'enum' : trail enumeration
-'any' : any path`
+'any' : any path
+'tgfree' : triangle free`
 
 func checkErr(err error) {
 	if err != nil {
@@ -94,16 +96,20 @@ func createRandomGraph(driver neo4j.Driver, graphString string) {
 }
 
 func createRandomQuery(n int) string {
-	if queryType == "tdp" {
+	switch queryType {
+	case "tdp":
 		return utils.RandomTwoDisjointPathQuery(n)
-	} else if queryType == "hamil" {
+	case "hamil":
 		return utils.HamiltonianPath()
-	} else if queryType == "enum" {
+	case "enum":
 		return utils.EnumeratePaths(n)
-	} else if queryType == "any" {
+	case "any":
 		return utils.FindAnyPath(n)
+	case "tgfree":
+		return utils.TriangleFree()
+	default:
+		return "invalid"
 	}
-	return ""
 }
 
 func createFiles(queryType string) (*os.File, *os.File) {

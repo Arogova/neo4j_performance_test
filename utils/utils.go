@@ -50,3 +50,8 @@ func FindAnyPath(n int) string {
 	return fmt.Sprintf(`MATCH p = ({name: %d})-[:Edge*]-({name: %d})
 		RETURN p LIMIT 1`, rand.Intn(n), rand.Intn(n))
 }
+
+func TriangleFree() string {
+	return `MATCH p = (x)-[:Edge]-(y)-[:Edge]-(z)-[:Edge]-(x)
+		RETURN count(p)=0`
+}
