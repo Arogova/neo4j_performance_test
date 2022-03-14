@@ -74,7 +74,8 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryRes
 		if err != nil {
 			resChan <- queryResult{qExecTime: -1, found: false}
 		} else {
-			resChan <- queryResult{qExecTime: int(summary.ResultAvailableAfter().Milliseconds()), found: len(records) == 1}
+			totalTime := summary.ResultAvailableAfter().Milliseconds() + summary.ResultConsumedAfter().Milliseconds()
+			resChan <- queryResult{qExecTime: int(totalTime), found: len(records) == 1}
 		}
 		return 1, nil
 	})
