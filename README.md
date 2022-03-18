@@ -18,5 +18,8 @@ The list of arguments is as follows :
 To chose the query you want to run, specify its id as argument. As of now, the queries available are :
   - "tdp" : Two Disjoint Paths on two pairs of random nodes
   - "hamil" : Hamiltonian path on any pairs of nodes
+  - "enum" : Enumerate all trails between two random nodes
+  - "any" : Return "yes" if a path exists between two random nodes, "no" otherwise
+  - "tgfree" : Return "yes" if the random graph is triangle free, "no" otherwise
 
 Example usage : `go run main.go --query=tdp --nodes=500`
