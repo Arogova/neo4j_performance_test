@@ -1,3 +1,14 @@
+save_as_svg_config = {
+  modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+  modeBarButtonsToAdd: [{
+    name: 'toImage2',
+    icon: Plotly.Icons.camera,
+    click: function(gd) {
+      Plotly.downloadImage(gd, {format: 'svg'})
+    }
+  }]
+}
+
 function analyze_data (results){
   success_traces = [];
   timeout_traces = [];
@@ -81,7 +92,7 @@ function plot_success (success_data){
     }
   };
 
-  Plotly.newPlot(success_plot, success_data, success_plot_layout);
+  Plotly.newPlot(success_plot, success_data, success_plot_layout, save_as_svg_config);
 }
 
 function plot_timeouts (timeouts_data){
@@ -99,7 +110,7 @@ function plot_timeouts (timeouts_data){
     }
   };
 
-  Plotly.newPlot(timeouts_plot, timeouts_data, timeouts_plot_layout);
+    Plotly.newPlot(timeouts_plot, timeouts_data, timeouts_plot_layout, save_as_svg_config);
 }
 
 inputElement = document.getElementById("input");
