@@ -26,8 +26,11 @@ type queryResult struct {
 }
 
 var queryType string
+var minNodes int
 var maxNodes int
+var inc int
 var start_p float64
+var seed int64
 var allowed_queries = map[string]bool{
 	"tdp":    true,
 	"hamil":  true,
@@ -114,10 +117,12 @@ func createRandomQuery(n int) string {
 
 func createFiles(queryType string) (*os.File, *os.File) {
 	timeLayout := "2006-02-01--15:04:05"
-	resultFile, err := os.Create("results/" + queryType + "_" + time.Now().Format(timeLayout) + ".csv")
+	resultFile, err := os.Create(fmt.Sprintf("results/%v_%v.csv", queryType, time.Now().Format(timeLayout)))
 	checkErr(err)
 	_, err = resultFile.WriteString("order,edge probability,query execution time,found,timestamp\n")
-	dumpFile, err := os.Create("results/" + queryType + "_" + time.Now().Format(timeLayout) + "_dump.txt")
+	dumpFile, err := os.Create(fmt.Sprintf("results/%v_%v_dump.txt",queryType, time.Now().Format(timeLayout)))
+	checkErr(err)
+	_, err = dumpFile.WriteString(fmt.Sprintf("seed = %v\n",seed))
 	checkErr(err)
 	return resultFile, dumpFile
 }
@@ -127,7 +132,7 @@ func testSuite(driver neo4j.Driver) {
 	defer resultFile.Close()
 	defer dumpFile.Close()
 	for p := start_p; p <= 1; p += 0.1 {
-		for n := 10; n <= maxNodes; n += 10 {
+		for n := minNodes; n <= maxNodes; n += inc {
 			graph := utils.CreateRandomGraphScript(n, p)
 			createRandomGraph(driver, graph)
 			ignore := true
@@ -158,7 +163,9 @@ func testSuite(driver neo4j.Driver) {
 
 func main() {
 	queryFlag := flag.String("query", "", "The query to run. "+allowed_q_desc)
-	maxNodesFlag := flag.Int("nodes", 300, "How big the largest random graph should be")
+	minNodesFlag := flag.Int("minNodes", 10, "How big the smallest random graph should be")
+	maxNodesFlag := flag.Int("maxNodes", 300, "How big the largest random graph should be")
+	incFlag := flag.Int("inc", 10, "How much bigger the graph should be after each iteration")
 	randSeedFlag := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
 	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port.")
 	usernameFlag := flag.String("user", "neo4j", "")
@@ -169,18 +176,21 @@ func main() {
 	if *queryFlag == "" {
 		panic(errors.New("Please choose a query to run"))
 	} else if !allowed_queries[*queryFlag] {
-		panic(errors.New(*queryFlag + " is not a valid query. " + allowed_q_desc))
+		panic(errors.New(fmt.Sprintf("%v is not a valid query. %v", *queryFlag, allowed_q_desc)))
 	}
 
 	if *randSeedFlag == -1 {
-		rand.Seed(time.Now().UnixNano())
+		seed = time.Now().UnixNano()
 	} else {
-		rand.Seed(*randSeedFlag)
+		seed = *randSeedFlag
 	}
+	rand.Seed(seed)
 
 	start_p = *pFlag
 	queryType = *queryFlag
+	minNodes = *minNodesFlag
 	maxNodes = *maxNodesFlag
+	inc = *incFlag
 
 	dbUri := "neo4j://localhost:" + strconv.FormatInt(*boltPortFlag, 10)
 	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
