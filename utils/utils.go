@@ -22,8 +22,6 @@ func CreateRandomGraphScript(n int, p float64) string {
 	return query
 }
 
-// Returns a neo4j query that searches for two disjoint paths between
-// two random pairs of nodes
 func RandomTwoDisjointPathQuery(n int) string {
 	return fmt.Sprintf(`MATCH p1 = (s1 {name: %d})-[:Edge*]-(t1 {name: %d})
     MATCH p2 = (s2 {name: %d})-[:Edge*]-(t2 {name: %d})
@@ -54,4 +52,14 @@ func FindAnyPath(n int) string {
 func TriangleFree() string {
 	return `MATCH p = (x)-[:Edge]-(y)-[:Edge]-(z)-[:Edge]-(x)
 		RETURN count(p)=0`
+}
+
+func EulerianPath() string {
+	return `MATCH ()-[e :Edge]-()
+	WITH collect(distinct id(e)) AS allEdges
+	MATCH path=()-[:Edge*]-()
+	WITH path, allEdges, [r in relationships(path) | id(r)] as edgesInPath
+	WHERE all(edge in allEdges where edge in edgesInPath)
+	AND size(allEdges) = size(edgesInPath)
+	return path LIMIT 1`
 }

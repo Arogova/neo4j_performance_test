@@ -37,13 +37,15 @@ var allowed_queries = map[string]bool{
 	"enum":   true,
 	"any":    true,
 	"tgfree": true,
+  "euler": true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
 'hamil' : hamiltonian path
 'enum' : trail enumeration
 'any' : any path
-'tgfree' : triangle free`
+'tgfree' : triangle free
+'euler' : eulerian trail`
 
 func checkErr(err error) {
 	if err != nil {
@@ -110,6 +112,8 @@ func createRandomQuery(n int) string {
 		return utils.FindAnyPath(n)
 	case "tgfree":
 		return utils.TriangleFree()
+  case "euler":
+    return utils.EulerianTrail()
 	default:
 		return "invalid"
 	}
