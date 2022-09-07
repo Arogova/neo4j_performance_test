@@ -54,7 +54,7 @@ func TriangleFree() string {
 		RETURN count(p)=0`
 }
 
-func EulerianPath() string {
+func EulerianTrail() string {
 	return `MATCH ()-[e :Edge]-()
 	WITH collect(distinct id(e)) AS allEdges
 	MATCH path=()-[:Edge*]-()

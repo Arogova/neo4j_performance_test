@@ -37,7 +37,7 @@ var allowed_queries = map[string]bool{
 	"enum":   true,
 	"any":    true,
 	"tgfree": true,
-  "euler": true,
+	"euler":  true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -112,8 +112,8 @@ func createRandomQuery(n int) string {
 		return utils.FindAnyPath(n)
 	case "tgfree":
 		return utils.TriangleFree()
-  case "euler":
-    return utils.EulerianTrail()
+	case "euler":
+		return utils.EulerianTrail()
 	default:
 		return "invalid"
 	}
@@ -124,9 +124,9 @@ func createFiles(queryType string) (*os.File, *os.File) {
 	resultFile, err := os.Create(fmt.Sprintf("results/%v_%v.csv", queryType, time.Now().Format(timeLayout)))
 	checkErr(err)
 	_, err = resultFile.WriteString("order,edge probability,query execution time,found,timestamp\n")
-	dumpFile, err := os.Create(fmt.Sprintf("results/%v_%v_dump.txt",queryType, time.Now().Format(timeLayout)))
+	dumpFile, err := os.Create(fmt.Sprintf("results/%v_%v_dump.txt", queryType, time.Now().Format(timeLayout)))
 	checkErr(err)
-	_, err = dumpFile.WriteString(fmt.Sprintf("seed = %v\n",seed))
+	_, err = dumpFile.WriteString(fmt.Sprintf("seed = %v\n", seed))
 	checkErr(err)
 	return resultFile, dumpFile
 }
