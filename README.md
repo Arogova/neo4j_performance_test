@@ -9,15 +9,20 @@ The list of arguments is as follows :
 | Option name | Description | Default value |
 | --- | --- | --- |
 | query | The query to run. See below. | - |
-| nodes | How big the largest random graph should be. | 300 |
+| minNodes | How big the smallest random graph should be. | 10 |
+| maxNodes | How big the latgest random graph should be. | 300 |
+| inc | How much bigger the graph should be after one step. | 10 |
+| p | Starting probability of edge connectedness. Increased by 0.1 at each step. | 0.1 |
 | seed | A seed for the rng. | Time.now() |
 | port | The server Bolt port. | 7687 |
 | user | Username to provide to neo4j. | neo4j |
 | pwd | Password to provide to neo4j. | 1234 |
+| memGraph | Adapt database address to memGraph. | false |
 
 To chose the query you want to run, specify its id as argument. As of now, the queries available are :
   - "tdp" : Two Disjoint Paths on two pairs of random nodes
   - "hamil" : Hamiltonian path on any pairs of nodes
+  - "euler" : Euler path on any pair of nodes
   - "enum" : Enumerate all trails between two random nodes
   - "any" : Return "yes" if a path exists between two random nodes, "no" otherwise
   - "tgfree" : Return "yes" if the random graph is triangle free, "no" otherwise
