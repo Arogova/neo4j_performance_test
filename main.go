@@ -175,6 +175,7 @@ func main() {
 	usernameFlag := flag.String("user", "neo4j", "")
 	passwordFlag := flag.String("pwd", "1234", "")
 	pFlag := flag.Float64("start", 0.1, "")
+	memgraphFlag := flag.Bool("memgraph", false, "Use this flag if running memGraph")
 
 	flag.Parse()
 	if *queryFlag == "" {
@@ -196,7 +197,11 @@ func main() {
 	maxNodes = *maxNodesFlag
 	inc = *incFlag
 
-	dbUri := "neo4j://localhost:" + strconv.FormatInt(*boltPortFlag, 10)
+	dbAddr := "neo4j://localhost:"
+	if (*memgraphFlag) {
+		dbAddr = "bolt://localhost:"
+	}
+	dbUri := dbAddr + strconv.FormatInt(*boltPortFlag, 10)
 	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
 	checkErr(err)
 	defer driver.Close()
