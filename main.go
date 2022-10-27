@@ -92,7 +92,7 @@ func createRandomGraph(driver neo4j.Driver, graphString string) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
 	session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		_, err := tx.Run("MATCH (n) DETACH DELETE (n)", nil)
+		_, err := tx.Run("MATCH (n) CALL {WITH n  DETACH DELETE n}", nil)	
 		checkErr(err)
 		_, err = tx.Run(graphString, nil)
 		checkErr(err)
