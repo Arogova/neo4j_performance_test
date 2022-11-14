@@ -7,15 +7,16 @@ import (
 
 // Returns a neo4j query that creates a random graph of n nodes such that
 // each pair of nodes is linked with probability p
-func CreateRandomGraphScript(n int, p float64) string {
-	query := ""
+func CreateRandomGraphScript(n int, p float64) []string {
+	query := make([]string, 0)
 	for i := 0; i < n; i++ {
-		query += fmt.Sprintf("CREATE (v%d {name:%d})\n", i, i)
+		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
 	}
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
 			if rand.Float64() <= p {
-				query += fmt.Sprintf("CREATE (v%d)-[:Edge]->(v%d)\n", i, j)
+				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge]->(v2)", i, j)
+				query = append(query, edgeQuery)
 			}
 		}
 	}

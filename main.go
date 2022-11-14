@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Arogova/neo4j_performance_test/utils"
-	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"math/rand"
 	"os"
 	"strconv"
@@ -88,16 +88,38 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryRes
 	})
 }
 
-func createRandomGraph(driver neo4j.Driver, graphString string) {
+func cleanUpDB(driver neo4j.Driver, n int) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
-	session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		_, err := tx.Run("MATCH (n) CALL {WITH n  DETACH DELETE n}", nil)	
-		checkErr(err)
-		_, err = tx.Run(graphString, nil)
-		checkErr(err)
-		return nil, nil
-	})
+	if n==-1 { //In case the number of nodes in the DB is unknow
+		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+			_, err := tx.Run("MATCH (n) DETACH DELETE n", nil)
+			checkErr(err)
+			return nil, nil
+		})
+	} else {
+		for i:=0; i<n; i++ {
+			deleteQuery := fmt.Sprintf("MATCH (n {name:%d}) DETACH DELETE n", i)
+			session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+				_, err := tx.Run(deleteQuery, nil)
+				checkErr(err)
+				return nil, nil
+			})
+		}
+	}
+}
+
+func createRandomGraph(driver neo4j.Driver, createGraphQuery []string, n int) {
+	cleanUpDB(driver, n)
+	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close()
+	for _, subQuery := range createGraphQuery{
+		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+			_, err := tx.Run(subQuery, nil)
+			checkErr(err)
+			return nil, nil
+		})
+	}
 }
 
 func createRandomQuery(n int) string {
@@ -135,10 +157,11 @@ func testSuite(driver neo4j.Driver) {
 	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
+	cleanUpDB(driver, -1)
 	for p := start_p; p <= 1; p += 0.1 {
 		for n := minNodes; n <= maxNodes; n += inc {
-			graph := utils.CreateRandomGraphScript(n, p)
-			createRandomGraph(driver, graph)
+			createGraphQuery := utils.CreateRandomGraphScript(n, p)
+			createRandomGraph(driver, createGraphQuery, n)
 			ignore := true
 			for i := 0; i < 5; i++ {
 				fmt.Printf("\rCurrently computing : p=%f, n=%d (iteration %d)", p, n, i+1)
@@ -156,7 +179,11 @@ func testSuite(driver neo4j.Driver) {
 						data := testResult{nodes: n, probability: p, queryResult: qRes, graph: "", query: ""}
 						writeToFile(resultFile, &data, false)
 					}
-					data := testResult{nodes: n, probability: p, queryResult: qRes, graph: graph, query: query}
+					createGraphQueryString := ""
+					for _, subQuery := range createGraphQuery {
+						createGraphQueryString += subQuery
+					}
+					data := testResult{nodes: n, probability: p, queryResult: qRes, graph: createGraphQueryString, query: query}
 					writeToFile(dumpFile, &data, true)
 				}
 				ignore = false
