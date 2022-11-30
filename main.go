@@ -31,6 +31,7 @@ var maxNodes int
 var inc int
 var start_p float64
 var seed int64
+var labeled bool
 var allowed_queries = map[string]bool{
 	"tdp":    true,
 	"hamil":  true,
@@ -38,6 +39,8 @@ var allowed_queries = map[string]bool{
 	"any":    true,
 	"tgfree": true,
 	"euler":  true,
+	"NormalAStarBStar" : true,
+	"AutomataAStarBStar" : true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -45,7 +48,9 @@ var allowed_q_desc = `Available queries are :
 'enum' : trail enumeration
 'any' : any path
 'tgfree' : triangle free
-'euler' : eulerian trail`
+'euler' : eulerian trail
+'NormalAStarBStar' : a*b*, the old fashioned way
+'AutomataAStarBStar' : a*b*, the automata way`
 
 func checkErr(err error) {
 	if err != nil {
@@ -136,6 +141,10 @@ func createRandomQuery(n int) string {
 		return utils.TriangleFree()
 	case "euler":
 		return utils.EulerianTrail()
+	case "NormalAStarBStar":
+		return utils.NormalAStarBStar()
+	case "AutomataAStarBStar":
+		return utils.AutomataAStarBStar()
 	default:
 		return "invalid"
 	}
@@ -160,7 +169,12 @@ func testSuite(driver neo4j.Driver) {
 	cleanUpDB(driver, -1)
 	for p := start_p; p <= 1; p += 0.1 {
 		for n := minNodes; n <= maxNodes; n += inc {
-			createGraphQuery := utils.CreateRandomGraphScript(n, p)
+			createGraphQuery := make([]string, 0)
+			if (labeled) {
+				createGraphQuery = utils.CreateLabeledGraphScript(n,p)
+			} else {
+				createGraphQuery = utils.CreateRandomGraphScript(n, p)
+			}
 			createRandomGraph(driver, createGraphQuery, n)
 			ignore := true
 			for i := 0; i < 5; i++ {
@@ -181,8 +195,9 @@ func testSuite(driver neo4j.Driver) {
 					}
 					createGraphQueryString := ""
 					for _, subQuery := range createGraphQuery {
-						createGraphQueryString += subQuery
+						createGraphQueryString += subQuery + "\n"
 					}
+					createGraphQueryString += "\n"
 					data := testResult{nodes: n, probability: p, queryResult: qRes, graph: createGraphQueryString, query: query}
 					writeToFile(dumpFile, &data, true)
 				}
@@ -203,12 +218,21 @@ func main() {
 	passwordFlag := flag.String("pwd", "1234", "")
 	pFlag := flag.Float64("start", 0.1, "")
 	memgraphFlag := flag.Bool("memgraph", false, "Use this flag if running memGraph")
+	labeledGraphFlag := flag.Bool("labeled", false, "Use this flag if the query requires a labeled graph")
 
 	flag.Parse()
 	if *queryFlag == "" {
 		panic(errors.New("Please choose a query to run"))
 	} else if !allowed_queries[*queryFlag] {
 		panic(errors.New(fmt.Sprintf("%v is not a valid query. %v", *queryFlag, allowed_q_desc)))
+	}
+
+	if *labeledGraphFlag && !(*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") {
+		panic(errors.New("You are asking to use a labeled graph with a non-labeled query. Please remove the --labeled flag or change the query."))
+	}
+
+	if (*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") && !*labeledGraphFlag {
+		panic(errors.New("You are asking to run a labeled query on a non-labled graph. Please add the --labeled flag or change the query."))
 	}
 
 	if *randSeedFlag == -1 {
@@ -223,6 +247,7 @@ func main() {
 	minNodes = *minNodesFlag
 	maxNodes = *maxNodesFlag
 	inc = *incFlag
+	labeled = *labeledGraphFlag
 
 	dbAddr := "neo4j://localhost:"
 	if (*memgraphFlag) {

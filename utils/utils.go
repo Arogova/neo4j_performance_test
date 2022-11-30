@@ -23,7 +23,7 @@ func CreateRandomGraphScript(n int, p float64) []string {
 	return query
 }
 
-func CreateLabeledGraphScript() []string{
+func CreateLabeledGraphScript(n int, p float64) []string{
 	query := make([]string, 0)
 	for i := 0; i < n; i++ {
 		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
@@ -31,8 +31,8 @@ func CreateLabeledGraphScript() []string{
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
 			label := "a"
-			if rand.Float64() < 0.5{
-				label := "b"
+			if rand.Float64() < 0.5 {
+				label = "b"
 			}
 			if rand.Float64() <= p {
 				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:%v]->(v2)", i, j, label)
@@ -85,11 +85,11 @@ func EulerianTrail() string {
 	return path LIMIT 1`
 }
 
-func NormalABStart() {
+func NormalAStarBStar() string {
 	return `MATCH p = ()-[:a *]-()-[:b *]-() RETURN p`
 }
 
-func AutomataABStart() {
+func AutomataAStarBStar() string {
 	return `MATCH p = (x)-[*]-(y)
 	WITH [r in relationships(p) | type(r)] as types_p, p
 	WITH reduce (state = 'q0', label in types_p |
