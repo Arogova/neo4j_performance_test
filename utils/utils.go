@@ -23,7 +23,7 @@ func CreateRandomGraphScript(n int, p float64) []string {
 	return query
 }
 
-func CreateLabeledGraphScript(n int, p float64) []string{
+func CreateLabeledGraphScript(n int, p float64) []string {
 	query := make([]string, 0)
 	for i := 0; i < n; i++ {
 		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
@@ -48,6 +48,16 @@ func RandomTwoDisjointPathQuery(n int) string {
     MATCH p2 = (s2 {name: %d})-[:Edge*]-(t2 {name: %d})
     WHERE none(r in relationships(p2) WHERE r in relationships(p1))
     RETURN p1, p2 LIMIT 1`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
+}
+
+func HamiltonianPathMemgraph() string {
+	return `MATCH (n)
+  WITH collect(n) AS allNodes
+  MATCH path=(s)-[:Edge*]-(t)
+  WITH path, allNodes, nodes(path) as nodesInPath
+  WHERE all(node in allNodes where node in nodesInPath)
+  AND size(allNodes)=size(nodesInPath)
+  RETURN path LIMIT 1`
 }
 
 func HamiltonianPath() string {

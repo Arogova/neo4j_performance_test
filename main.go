@@ -4,12 +4,13 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/Arogova/neo4j_performance_test/utils"
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/Arogova/neo4j_performance_test/utils"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 type testResult struct {
@@ -32,15 +33,16 @@ var inc int
 var start_p float64
 var seed int64
 var labeled bool
+var memgraph bool
 var allowed_queries = map[string]bool{
-	"tdp":    true,
-	"hamil":  true,
-	"enum":   true,
-	"any":    true,
-	"tgfree": true,
-	"euler":  true,
-	"NormalAStarBStar" : true,
-	"AutomataAStarBStar" : true,
+	"tdp":                true,
+	"hamil":              true,
+	"enum":               true,
+	"any":                true,
+	"tgfree":             true,
+	"euler":              true,
+	"NormalAStarBStar":   true,
+	"AutomataAStarBStar": true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -80,14 +82,23 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryRes
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close()
 	session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-		result, _ := tx.Run(queryString, nil)
+		startTime := time.Now()
+		result, err := tx.Run(queryString, nil)
+		checkErr(err)
 		records, _ := result.Collect()
 		summary, err := result.Consume()
+		endTime := time.Now()
 		if err != nil {
 			resChan <- queryResult{qExecTime: -1, found: false}
 		} else {
-			totalTime := summary.ResultAvailableAfter().Milliseconds() + summary.ResultConsumedAfter().Milliseconds()
-			resChan <- queryResult{qExecTime: int(totalTime), found: len(records) == 1}
+			totalTime := 0
+			if memgraph {
+				totalTime = int(endTime.Sub(startTime).Milliseconds())
+			} else {
+				totalTime = int(summary.ResultAvailableAfter().Milliseconds() + summary.ResultConsumedAfter().Milliseconds())
+			}
+
+			resChan <- queryResult{qExecTime: totalTime, found: len(records) == 1}
 		}
 		return 1, nil
 	})
@@ -96,14 +107,14 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryRes
 func cleanUpDB(driver neo4j.Driver, n int) {
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
-	if n==-1 { //In case the number of nodes in the DB is unknow
+	if n == -1 { //In case the number of nodes in the DB is unknow
 		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 			_, err := tx.Run("MATCH (n) DETACH DELETE n", nil)
 			checkErr(err)
 			return nil, nil
 		})
 	} else {
-		for i:=0; i<n; i++ {
+		for i := 0; i < n; i++ {
 			deleteQuery := fmt.Sprintf("MATCH (n {name:%d}) DETACH DELETE n", i)
 			session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 				_, err := tx.Run(deleteQuery, nil)
@@ -118,7 +129,7 @@ func createRandomGraph(driver neo4j.Driver, createGraphQuery []string, n int) {
 	cleanUpDB(driver, n)
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
-	for _, subQuery := range createGraphQuery{
+	for _, subQuery := range createGraphQuery {
 		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 			_, err := tx.Run(subQuery, nil)
 			checkErr(err)
@@ -132,7 +143,11 @@ func createRandomQuery(n int) string {
 	case "tdp":
 		return utils.RandomTwoDisjointPathQuery(n)
 	case "hamil":
-		return utils.HamiltonianPath()
+		if memgraph {
+			return utils.HamiltonianPathMemgraph()
+		} else {
+			return utils.HamiltonianPath()
+		}
 	case "enum":
 		return utils.EnumeratePaths(n)
 	case "any":
@@ -170,8 +185,8 @@ func testSuite(driver neo4j.Driver) {
 	for p := start_p; p <= 1; p += 0.1 {
 		for n := minNodes; n <= maxNodes; n += inc {
 			createGraphQuery := make([]string, 0)
-			if (labeled) {
-				createGraphQuery = utils.CreateLabeledGraphScript(n,p)
+			if labeled {
+				createGraphQuery = utils.CreateLabeledGraphScript(n, p)
 			} else {
 				createGraphQuery = utils.CreateRandomGraphScript(n, p)
 			}
@@ -248,9 +263,10 @@ func main() {
 	maxNodes = *maxNodesFlag
 	inc = *incFlag
 	labeled = *labeledGraphFlag
+	memgraph = *memgraphFlag
 
 	dbAddr := "neo4j://localhost:"
-	if (*memgraphFlag) {
+	if memgraph {
 		dbAddr = "bolt://localhost:"
 	}
 	dbUri := dbAddr + strconv.FormatInt(*boltPortFlag, 10)
