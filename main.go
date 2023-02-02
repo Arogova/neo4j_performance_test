@@ -155,7 +155,11 @@ func createRandomQuery(n int) string {
 	case "tgfree":
 		return utils.TriangleFree()
 	case "euler":
-		return utils.EulerianTrail()
+		if memgraph {
+			return utils.EulerianTrailMemgraph()
+		} else {
+			return utils.EulerianTrail()
+		}
 	case "NormalAStarBStar":
 		return utils.NormalAStarBStar()
 	case "AutomataAStarBStar":

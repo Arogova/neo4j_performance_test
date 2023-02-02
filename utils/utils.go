@@ -85,6 +85,16 @@ func TriangleFree() string {
 		RETURN count(p)=0`
 }
 
+func EulerianTrailMemgraph() string {
+	return `MATCH ()-[e :Edge]-()
+	WITH collect(distinct e) AS allEdges
+	MATCH path=()-[:Edge*]-()
+	WITH path, allEdges, relationships(path) as edgesInPath
+	WHERE all(edge in allEdges where edge in edgesInPath)
+	AND size(allEdges) = size(edgesInPath)
+	return path LIMIT 1`
+}
+
 func EulerianTrail() string {
 	return `MATCH ()-[e :Edge]-()
 	WITH collect(distinct id(e)) AS allEdges
