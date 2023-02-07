@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -26,6 +27,10 @@ type queryResult struct {
 	found     bool
 }
 
+type ctxCloser interface {
+	Close(context.Context) error
+}
+
 var queryType string
 var minNodes int
 var maxNodes int
@@ -34,6 +39,7 @@ var start_p float64
 var seed int64
 var labeled bool
 var memgraph bool
+var ctx context.Context
 var allowed_queries = map[string]bool{
 	"tdp":                true,
 	"hamil":              true,
@@ -60,6 +66,10 @@ func checkErr(err error) {
 	}
 }
 
+func handleClose(ctx context.Context, closer ctxCloser) {
+	checkErr(closer.Close(ctx))
+}
+
 func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 	timeLayout := "15:04:05"
 	qExecTime := strconv.Itoa(data.queryResult.qExecTime)
@@ -78,17 +88,19 @@ func writeToFile(fileLocation *os.File, data *testResult, dump bool) {
 
 // Executes the query given as argument
 // Sends number of results to channel c
-func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryResult) {
-	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
-	defer session.Close()
-	session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+func executeQuery(driver neo4j.DriverWithContext, queryString string, resChan chan queryResult) {
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer handleClose(ctx, session)
+	_, err := neo4j.ExecuteRead(ctx, session, func(tx neo4j.ManagedTransaction) (interface{}, error) {
 		startTime := time.Now()
-		result, err := tx.Run(queryString, nil)
+		result, err := tx.Run(ctx, queryString, nil)
 		checkErr(err)
-		records, _ := result.Collect()
-		summary, err := result.Consume()
+		records, err := result.Collect(ctx)
+		checkErr(err)
+		summary, err := result.Consume(ctx)
 		endTime := time.Now()
 		if err != nil {
+			fmt.Printf("%v", err)
 			resChan <- queryResult{qExecTime: -1, found: false}
 		} else {
 			totalTime := 0
@@ -97,44 +109,47 @@ func executeQuery(driver neo4j.Driver, queryString string, resChan chan queryRes
 			} else {
 				totalTime = int(summary.ResultAvailableAfter().Milliseconds() + summary.ResultConsumedAfter().Milliseconds())
 			}
-
 			resChan <- queryResult{qExecTime: totalTime, found: len(records) == 1}
 		}
 		return 1, nil
 	})
+	checkErr(err)
 }
 
-func cleanUpDB(driver neo4j.Driver, n int) {
-	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	defer session.Close()
-	if n == -1 { //In case the number of nodes in the DB is unknow
-		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-			_, err := tx.Run("MATCH (n) DETACH DELETE n", nil)
+func cleanUpDB(driver neo4j.DriverWithContext, n int) {
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer handleClose(ctx, session)
+	if n == -1 {
+		_, err := neo4j.ExecuteWrite(ctx, session, func(tx neo4j.ManagedTransaction) (interface{}, error) {
+			_, err := tx.Run(ctx, "MATCH (n) DETACH DELETE n", nil)
 			checkErr(err)
-			return nil, nil
+			return 1, nil
 		})
+		checkErr(err)
 	} else {
 		for i := 0; i < n; i++ {
 			deleteQuery := fmt.Sprintf("MATCH (n {name:%d}) DETACH DELETE n", i)
-			session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-				_, err := tx.Run(deleteQuery, nil)
+			_, err := neo4j.ExecuteWrite(ctx, session, func(tx neo4j.ManagedTransaction) (interface{}, error) {
+				_, err := tx.Run(ctx, deleteQuery, nil)
 				checkErr(err)
-				return nil, nil
+				return 1, nil
 			})
+			checkErr(err)
 		}
 	}
 }
 
-func createRandomGraph(driver neo4j.Driver, createGraphQuery []string, n int) {
+func createRandomGraph(driver neo4j.DriverWithContext, createGraphQuery []string, n int) {
 	cleanUpDB(driver, n)
-	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	defer session.Close()
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer handleClose(ctx, session)
 	for _, subQuery := range createGraphQuery {
-		session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
-			_, err := tx.Run(subQuery, nil)
+		_, err := neo4j.ExecuteWrite(ctx, session, func(tx neo4j.ManagedTransaction) (interface{}, error) {
+			_, err := tx.Run(ctx, subQuery, nil)
 			checkErr(err)
-			return nil, nil
+			return 1, nil
 		})
+		checkErr(err)
 	}
 }
 
@@ -181,7 +196,7 @@ func createFiles(queryType string) (*os.File, *os.File) {
 	return resultFile, dumpFile
 }
 
-func testSuite(driver neo4j.Driver) {
+func testSuite(driver neo4j.DriverWithContext) {
 	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
@@ -274,8 +289,9 @@ func main() {
 		dbAddr = "bolt://localhost:"
 	}
 	dbUri := dbAddr + strconv.FormatInt(*boltPortFlag, 10)
-	driver, err := neo4j.NewDriver(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
+	ctx = context.Background()
+	driver, err := neo4j.NewDriverWithContext(dbUri, neo4j.BasicAuth(*usernameFlag, *passwordFlag, ""))
 	checkErr(err)
-	defer driver.Close()
+	defer handleClose(ctx, driver)
 	testSuite(driver)
 }
