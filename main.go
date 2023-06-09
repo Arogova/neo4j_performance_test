@@ -49,6 +49,7 @@ var allowed_queries = map[string]bool{
 	"euler":              true,
 	"NormalAStarBStar":   true,
 	"AutomataAStarBStar": true,
+	"SmartTDP":           true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -58,7 +59,8 @@ var allowed_q_desc = `Available queries are :
 'tgfree' : triangle free
 'euler' : eulerian trail
 'NormalAStarBStar' : a*b*, the old fashioned way
-'AutomataAStarBStar' : a*b*, the automata way`
+'AutomataAStarBStar' : a*b*, the automata way
+'SmartTDP' : two disjoint path using Cypher trail semantics`
 
 func checkErr(err error) {
 	if err != nil {
@@ -179,6 +181,8 @@ func createRandomQuery(n int) string {
 		return utils.NormalAStarBStar()
 	case "AutomataAStarBStar":
 		return utils.AutomataAStarBStar()
+	case "SmartTDP":
+		return utils.SmartRandomTwoDisjointPathQuery(n)
 	default:
 		return "invalid"
 	}
@@ -189,6 +193,7 @@ func createFiles(queryType string) (*os.File, *os.File) {
 	resultFile, err := os.Create(fmt.Sprintf("results/%v_%v.csv", queryType, time.Now().Format(timeLayout)))
 	checkErr(err)
 	_, err = resultFile.WriteString("order,edge probability,query execution time,found,timestamp\n")
+	checkErr(err)
 	dumpFile, err := os.Create(fmt.Sprintf("results/%v_%v_dump.txt", queryType, time.Now().Format(timeLayout)))
 	checkErr(err)
 	_, err = dumpFile.WriteString(fmt.Sprintf("seed = %v\n", seed))
@@ -256,17 +261,17 @@ func main() {
 
 	flag.Parse()
 	if *queryFlag == "" {
-		panic(errors.New("Please choose a query to run"))
+		panic(errors.New("please choose a query to run"))
 	} else if !allowed_queries[*queryFlag] {
 		panic(errors.New(fmt.Sprintf("%v is not a valid query. %v", *queryFlag, allowed_q_desc)))
 	}
 
 	if *labeledGraphFlag && !(*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") {
-		panic(errors.New("You are asking to use a labeled graph with a non-labeled query. Please remove the --labeled flag or change the query."))
+		panic(errors.New("you are asking to use a labeled graph with a non-labeled query. Please remove the --labeled flag or change the query."))
 	}
 
 	if (*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") && !*labeledGraphFlag {
-		panic(errors.New("You are asking to run a labeled query on a non-labled graph. Please add the --labeled flag or change the query."))
+		panic(errors.New("you are asking to run a labeled query on a non-labled graph. Please add the --labeled flag or change the query."))
 	}
 
 	if *randSeedFlag == -1 {

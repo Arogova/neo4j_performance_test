@@ -50,6 +50,12 @@ func RandomTwoDisjointPathQuery(n int) string {
     RETURN p1, p2 LIMIT 1`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
 }
 
+func SmartRandomTwoDisjointPathQuery(n int) string {
+	return fmt.Sprintf(`MATCH p1 = (s1 {name: %d})-[:Edge*]-(t1 {name: %d}),
+	p2 = (s2 {name: %d})-[:Edge*]-(t2 {name: %d})
+	RETURN p1, p2 LIMIT 1`, rand.Intn(n), rand.Intn(n), rand.Intn(n), rand.Intn(n))
+}
+
 func HamiltonianPathMemgraph() string {
 	return `MATCH (n)
   WITH collect(n) AS allNodes
