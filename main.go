@@ -68,29 +68,33 @@ func testSuite(ctx context.Context) {
 
 	if doubleLine {
 		for n := minNodes; n <= maxNodes; n += inc {
-			var createGraphQuery []string
-			if postgres {
-				createGraphQuery = utils.CreateRandomDoubleLineGraphScriptSQL(n)
-			} else {
-				createGraphQuery = utils.CreateRandomDoubleLineGraphScript(n)
+			for reps := 0; reps < repeats; reps++ {
+				var createGraphQuery []string
+				if postgres {
+					createGraphQuery = utils.CreateRandomDoubleLineGraphScriptSQL(n)
+				} else {
+					createGraphQuery = utils.CreateRandomDoubleLineGraphScript(n)
+				}
+				utils.SetUpDB(ctx, db, createGraphQuery, n)
+				testRound(ctx, n, -1.0, createGraphQuery, resultFile, dumpFile)
 			}
-			utils.SetUpDB(ctx, db, createGraphQuery, n)
-			testRound(ctx, n, -1.0, createGraphQuery, resultFile, dumpFile)
 		}
 	} else {
 		for p := start_p; p <= end_p; p += 0.1 {
 			for n := minNodes; n <= maxNodes; n += inc {
-				var createGraphQuery []string
-				if labeled {
-					createGraphQuery = utils.CreateLabeledGraphScript(n, p)
+				for reps := 0; reps < repeats; reps++ {
+					var createGraphQuery []string
+					if labeled {
+						createGraphQuery = utils.CreateLabeledGraphScript(n, p)
 
-				} else if postgres {
-					createGraphQuery = utils.CreateRandomGraphScriptSQL(n, p)
-				} else {
-					createGraphQuery = utils.CreateRandomGraphScript(n, p)
+					} else if postgres {
+						createGraphQuery = utils.CreateRandomGraphScriptSQL(n, p)
+					} else {
+						createGraphQuery = utils.CreateRandomGraphScript(n, p)
+					}
+					utils.SetUpDB(ctx, db, createGraphQuery, n)
+					testRound(ctx, n, p, createGraphQuery, resultFile, dumpFile)
 				}
-				utils.SetUpDB(ctx, db, createGraphQuery, n)
-				testRound(ctx, n, p, createGraphQuery, resultFile, dumpFile)
 			}
 		}
 	}
@@ -125,6 +129,7 @@ func setUpFlags() {
 	maxNodesFlag := flag.Int("maxNodes", 300, "How big the largest random graph should be")
 	incFlag := flag.Int("inc", 10, "How much bigger the graph should be after each iteration")
 	randSeedFlag := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
+	repeatsFlag := flag.Int("repeats", 5, "How many times each configuration should be tested")
 	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port.")
 	usernameFlag := flag.String("user", "neo4j", "")
 	passwordFlag := flag.String("pwd", "1234", "")
@@ -146,6 +151,7 @@ func setUpFlags() {
 	minNodes = *minNodesFlag
 	maxNodes = *maxNodesFlag
 	inc = *incFlag
+	repeats = *repeatsFlag
 	labeled = *labeledGraphFlag
 	doubleLine = *doubleLineGraphFlag
 	memgraph = *memgraphFlag
@@ -305,6 +311,7 @@ var inc int
 var start_p float64
 var end_p float64
 var seed int64
+var repeats int
 var labeled bool
 var doubleLine bool
 var memgraph bool
