@@ -5,43 +5,7 @@ import (
 	"math/rand"
 )
 
-// Returns a neo4j query that creates a random graph of n nodes such that
-// each pair of nodes is linked with probability p
-func CreateRandomGraphScript(n int, p float64) []string {
-	query := make([]string, 0)
-	for i := 0; i < n; i++ {
-		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
-	}
-	for i := 0; i < n; i++ {
-		for j := 0; j < n; j++ {
-			if rand.Float64() <= p {
-				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge]->(v2)", i, j)
-				query = append(query, edgeQuery)
-			}
-		}
-	}
-	return query
-}
-
-func CreateLabeledGraphScript(n int, p float64) []string {
-	query := make([]string, 0)
-	for i := 0; i < n; i++ {
-		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
-	}
-	for i := 0; i < n; i++ {
-		for j := 0; j < n; j++ {
-			label := "a"
-			if rand.Float64() < 0.5 {
-				label = "b"
-			}
-			if rand.Float64() <= p {
-				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:%v]->(v2)", i, j, label)
-				query = append(query, edgeQuery)
-			}
-		}
-	}
-	return query
-}
+//Cypher
 
 func RandomTwoDisjointPathQuery(n int) string {
 	return fmt.Sprintf(`MATCH p1 = (s1 {name: %d})-[:Edge*]-(t1 {name: %d})
@@ -138,4 +102,62 @@ func AutomataAStarBStar() string {
 	WHERE final_state in ['q2', 'q1']
 	RETURN p
 	`
+}
+
+func SubsetSum(n int) string {
+	return fmt.Sprintf(
+		`MATCH p = allShortestPaths(({name:0})-[:Edge*]->({name:%d}))
+	WITH [r in relationships(p) | r.value] as values, p
+	WITH reduce(sum=0, v in values | sum+v) as sum, p
+	WHERE sum=0
+	RETURN p`, n-1)
+}
+
+func ShortestHamiltonian(n int) string {
+	return fmt.Sprintf(`MATCH (n)
+	WITH collect(n.name) AS allNodes
+	MATCH path=shortestPath((s)-[:Edge*%d..%d]-(t))
+	WITH path, allNodes, [y in nodes(path) | y.name] as nodesInPath
+	WHERE all(node in allNodes where node in nodesInPath)
+	RETURN path LIMIT 1
+	`, n, n)
+}
+
+//SQL
+
+func SubsetSumSQL(n int) string {
+	return fmt.Sprintf(`explain analyze with recursive paths(source, target, path, total_weight)                   
+	AS (SELECT src as source, trg as target, ARRAY[src,weight,trg] as path, weight as total_weight
+		FROM G
+		WHERE src = 0
+		UNION
+		SELECT source, trg, array_append(array_append(path,weight),trg), total_weight+weight as total_weight	
+		FROM G, paths
+		WHERE src=target)
+	SELECT *
+	FROM paths WHERE total_weight=0 and source=0 and target=%d;`, n-1)
+}
+
+func HamiltonianSQL() string {
+	return `explain analyze with recursive paths(startP, endP, path)                   
+	AS (SELECT src as startP, trg as endP, ARRAY[src,trg] as path
+		FROM G
+		UNION
+		SELECT startP, trg, array_append(path,trg)	
+		FROM G, paths
+		WHERE src=endP AND trg <> ALL(path))
+	SELECT * FROM paths WHERE ARRAY_LENGTH(path,1) = (SELECT COUNT(distinct src) FROM G)
+	LIMIT 1;`
+}
+
+func EulerianSQL() string {
+	return `explain analyze with recursive paths(startP, endP, path)                   
+	AS (SELECT src as startP, trg as endP, ARRAY[(src,trg)] as path
+		FROM G
+		UNION
+		SELECT startP, trg, array_append(path,(src,trg))	
+		FROM G, paths
+		WHERE src=endP AND (src,trg) <> ALL(path) AND  (trg,src) <> ALL(path))
+	SELECT * FROM paths WHERE ARRAY_LENGTH(path,1) = (SELECT COUNT(*)/2 FROM G)
+	LIMIT 1;`
 }
