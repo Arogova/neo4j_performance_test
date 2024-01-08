@@ -2,19 +2,21 @@
 <html>
 <head>
 <title>Neo4j Performance test results</title>
-<script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="papaparse.min.js"></script>
 </head>
 <body>
 
 <p>Please input the results file<p>
 <input type="file" id="input">
+<p>If plotting results for Subset Sum, check this box: </p><input type="checkbox" id="subsetsum-checkbox">
 
-<div style="display:flex">
-<div id="success-plot"></div>
-<div id="timeouts-plot"></div>
+<div id="success-plot" style="width: 1600px;height:800px;"></div>
+<div id="timeouts-plot" style="width: 1600px;height:800px;"></div>
+<div id="min-timeout-plot" style="width: 1600px;height:800px;"></div>
+<div id="subsetsum-plot" style="width: 1600px;height:800px;"></div>
 </div>
 
-<script src="plot_results_3D.js" defer></script>
+<script src="plot_results.js" defer></script>
 </body>
 </html>

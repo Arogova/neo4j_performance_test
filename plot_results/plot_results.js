@@ -1,78 +1,471 @@
-function analyze_data (results) {
-  success_trace = {
-    x: [],
-    y: [],
-    type : 'scatter'
-  }
-  timeout_trace = {
-    x: [],
-    y: [],
-    type : 'scatter'
-  }
-  results.data.forEach(row => {
-    order = parseFloat(row['order']);
-    i = (order/10)-1;
-    time = row['query execution time'].trim();
-    if (success_trace.x[i] === undefined) {
-      success_trace.x[i] = order;
-      timeout_trace.x[i] = order;
-    }
-    if (timeout_trace.y[i] === undefined) timeout_trace.y[i] = 0;
-    if (success_trace.y[i] === undefined) success_trace.y[i] = 0;
-    if (time.localeCompare('timeout') === 0) timeout_trace.y[i] += 1;
-    else success_trace.y[i] = (success_trace.y[i] + parseFloat(time))/2;
-  });
-  return {
-    success_trace: success_trace,
-    timeout_trace: timeout_trace
-  }
-}
-
-function plot_success (success_data){
-  console.log(success_data);
-  success_plot_layout = {
-    title: 'Average run time of successful runs',
-    showlegend: false,
-    autosize: true,
-    width: 800,
-    height: 800,
-    xaxis : {title: 'Number of nodes'},
-    yaxis : {title: 'Average run time in ms'}
-  };
-
-
-  Plotly.newPlot('success-plot', [success_data], success_plot_layout);
-}
-
-function plot_timeouts (timeouts_data){
-  timeouts_plot_layout = {
-    title: '# of timeouts per scenario (out of 10 runs) ',
-    showlegend: false,
-    autosize: true,
-    width: 800,
-    height: 800,
-    xaxis : {title: 'Numer of nodes'},
-    yaxis : {title: '# of timeouts'}
-  };
-
-
-  Plotly.newPlot('timeouts-plot', [timeouts_data], timeouts_plot_layout);
-}
-
 inputElement = document.getElementById("input");
 inputElement.addEventListener("change", handleFiles, false);
 function handleFiles() {
+  filePath = this.files[0].name
   Papa.parse(this.files[0], {
     skipEmptyLines: true,
     header: true,
-    transformHeader:function(h) {
+    transformHeader: function (h) {
       return h.trim();
     },
-    complete: function(results) {
-      analyzed = analyze_data(results);
-      console.log(analyzed);
-      plot_success(analyzed.success_trace);
-      plot_timeouts(analyzed.timeout_trace);
+    complete: function (results) {
+      if (document.getElementById("subsetsum-checkbox").checked){
+        distinctNodes = getDistinctNodes(results)
+        createSubsetSumChart(format_subsetsum_avg(results), distinctNodes, "subsetsum-plot")
+      } else {
+        nodePos = getNodeToPosMap(results)
+        distinctNodes = getDistinctNodes(results)
+  
+        timeout_results = compute_timeouts(results)
+  
+        createAverageHeatmap(format_average(nodePos, compute_average(results)), distinctNodes, "success-plot", filePath)
+        createTimeoutHeatmap(format_timeouts(nodePos, timeout_results), distinctNodes, "timeouts-plot", filePath)
+        createMinNodeLineChart(format_min_nodes(timeout_results), "min-timeout-plot", filePath)
+  
+        magic()
+      }
     }
   });
+}
+
+function createAverageHeatmap(formatted_average, distinctNodes, divId, filePath) {
+  options = {
+    title: {
+      text: "Average execution time of " + getFullProblemName(filePath) + " in ms",
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10
+      },
+      left: 'center',
+      padding: [20, 0, 0, 0],
+    },
+    xAxis: {
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: distinctNodes,
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      },
+      offset: 20,
+    },
+    yAxis: {
+      name: "probability",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      }
+    },
+    visualMap: {
+      min: 0,
+      max: 300000,
+      calculable: true,
+      inRange: {
+        color: ["#66bb6a", "#42a5f5"]
+      },
+      right: "20px",
+      top: "10%",
+      itemHeight: 550
+    },
+    series: [{
+      name: '',
+      type: "heatmap",
+      data: formatted_average,
+      coordinateSystem: "cartesian2d",
+      label: {
+        show: true,
+        align: 'center',
+        fontSize: 20
+      }
+    }],
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "average_execution_time",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  averageChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  averageChart.setOption(options)
+}
+
+function createTimeoutHeatmap(formatted_timeouts, distinctNodes, divId, filePath) {
+  options = {
+    title: {
+      text: "Timeout percentage of " + getFullProblemName(filePath),
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10
+      },
+      left: 'center',
+      padding: [20, 0, 0, 0],
+    },
+    xAxis: {
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: distinctNodes,
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      },
+      offset: 20
+    },
+    yAxis: {
+      name: "probability",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      }
+    },
+    visualMap: {
+      min: 0,
+      max: 100,
+      calculable: true,
+      inRange: {
+        color: ["#66bb6a", "#ec7063"]
+      },
+      right: "20px",
+      top: "10%",
+      itemHeight: 550
+    },
+    series: [{
+      name: '',
+      type: "heatmap",
+      data: formatted_timeouts,
+      coordinateSystem: "cartesian2d",
+      label: {
+        show: true,
+        align: 'center',
+        fontSize: 20
+      }
+    }],
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "timeout_percentage",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  timeoutChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  timeoutChart.setOption(options)
+}
+
+function createMinNodeLineChart(formatted_min_node, divId, filePath) {
+  options = {
+    title: {
+      text: "Minimum amount of nodes to 50% timeout for the " + getFullProblemName(filePath) + " problem",
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10,
+      },
+      padding: [20, 0, 0, 0],
+      left: 'center'
+    },
+    xAxis: {
+      type: "category",
+      name: "probability",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      data: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      axisLabel: {
+        fontSize: 24
+      },
+      offset: 20
+    },
+    yAxis: {
+      type: "value",
+      name: "minimum nodes to timeout",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      axisLabel: {
+        fontSize: 24
+      }
+    },
+    series: {
+      type: "line",
+      smooth: true,
+      data: formatted_min_node,
+      label: {
+        show: true,
+        position: 'bottom',
+        fontSize: 20
+      }
+    },
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "min_node_to_timeout",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  minNodeChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  minNodeChart.setOption(options)
+}
+
+function createSubsetSumChart(formatted_results, distinctNodes, divId) {
+  options = {
+    title: {
+      text: "Average execution time for the SubsetSum problem",
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10,
+      },
+      padding: [20, 0, 0, 0],
+      left: 'center'
+    },
+    xAxis: {
+      type: "category",
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      data: distinctNodes,
+      axisLabel: {
+        fontSize: 24
+      },
+      offset: 20
+    },
+    yAxis: {
+      type: "value",
+      name: "avg exec time in ms",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      axisLabel: {
+        fontSize: 24
+      }
+    },
+    series: {
+      type: "line",
+      smooth: true,
+      data: formatted_results,
+      label: {
+        show: true,
+        position: 'top',
+        fontSize: 20
+      }
+    },
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "subsetsum",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  subsetSumChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  subsetSumChart.setOption(options)
+  console.log(formatted_results)
+}
+
+function compute_average(results) {
+  unformatted = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"] + ":" + res["edge probability"])) {
+      unformatted.push({
+        order: res["order"],
+        probability: res["edge probability"],
+        avgExecTime: -1
+      })
+      element_position.set(res["order"] + ":" + res["edge probability"], unformatted.length - 1)
+    }
+
+    elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
+
+    if (res["query execution time"] !== "timeout") {
+      if (unformatted[elementPos].avgExecTime == -1) {
+        unformatted[elementPos].avgExecTime = res["query execution time"]
+      } else {
+        unformatted[elementPos].avgExecTime = (parseFloat(unformatted[elementPos].avgExecTime) + parseFloat(res["query execution time"])) / 2
+      }
+    }
+  });
+  return unformatted
+}
+
+function format_average(nodePos, average_results) {
+  formatted = []
+  average_results.forEach(el => {
+    if (el.avgExecTime == -1) {
+      formatted.push({
+        value: [nodePos.get(el.order), probPos.get(el.probability), -1],
+        itemStyle: { color: "#ec7063" },
+        symbol: "circle"
+      })
+    } else {
+      formatted.push({ value: [nodePos.get(el.order), probPos.get(el.probability), Math.round(parseFloat(el.avgExecTime))] })
+    }
+  })
+
+  return formatted
+}
+
+function compute_timeouts(results) {
+  unformatted = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"] + ":" + res["edge probability"])) {
+      unformatted.push({
+        order: res["order"],
+        probability: res["edge probability"],
+        percTimeout: 100
+      })
+      element_position.set(res["order"] + ":" + res["edge probability"], unformatted.length - 1)
+    }
+
+    elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
+
+
+    if (res["query execution time"] !== "timeout") {
+      unformatted[elementPos].percTimeout = unformatted[elementPos].percTimeout - 25
+    }
+  });
+
+  return unformatted
+}
+
+function format_timeouts(nodePos, timeout_results) {
+  formatted = timeout_results.map(el => {
+    return [nodePos.get(el.order), probPos.get(el.probability), el.percTimeout]
+  })
+  return formatted
+}
+
+function format_min_nodes(timeoutResults) {
+  formatted = []
+  element_position = new Map()
+
+  timeoutResults.forEach(res => {
+    if (!element_position.has(res.probability)) {
+      formatted.push("-")
+      element_position.set(res.probability, formatted.length - 1)
+    }
+
+    elementPos = element_position.get(res.probability)
+
+    if (res.percTimeout >= 50 && (formatted[elementPos] == "-" || parseInt(formatted[elementPos]) > parseInt(res.order))) {
+      formatted[elementPos] = res.order
+    }
+  })
+
+  return formatted
+}
+
+function format_subsetsum_avg (results) {
+  formatted = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"])) {
+      formatted.push("-")
+      element_position.set(res["order"], formatted.length-1)
+    }
+
+    elementPos = element_position.get(res["order"])
+
+    if (res["query execution time"] !== "timeout") {
+      if (formatted[elementPos] == "-") {
+        formatted[elementPos] = res["query execution time"]
+      } else {
+        formatted[elementPos] - (parseFloat(formatted[elementPos])) + parseFloat(res["query execution time"]) / 2
+      }
+    }
+  })
+
+  return formatted
+}
+
+function getNodeToPosMap(results) {
+  distinctNodes = getDistinctNodes(results)
+  distinctNodes.sort((a, b) => parseInt(a) - parseInt(b))
+  nodePos = new Map()
+  lastNodePos = 0
+  distinctNodes.forEach(el => {
+    nodePos.set(el, lastNodePos)
+    lastNodePos++
+  })
+
+  return nodePos
+}
+
+function getDistinctNodes(results) {
+  distinctNodes = []
+  results.data.forEach(res => {
+    if (!distinctNodes.includes(res["order"])) distinctNodes.push(res["order"])
+  })
+
+  return distinctNodes
+}
+
+function getFullProblemName(filePath) {
+  problems = new Map([
+    ["hamil", "Hamiltonian path"],
+    ["euler", "Eulerian path"],
+    ["subset", "Subset sum"]
+  ])
+
+  problemName = "unknown problem"
+  problems.forEach((fullName, shortName, _) => {
+    if (filePath.includes(shortName)) {
+      problemName = fullName
+    }
+  })
+
+  return problemName
+}
+
+probPos = new Map([['0.1', 0], ['0.2', 1], ['0.3', 2], ['0.4', 3], ['0.5', 4], ['0.6', 5], ['0.7', 6], ['0.8', 7], ['0.9', 8], ['1.0', 9]])
+
+function magic() {
+  nullValues = Array.from(document.getElementsByTagName("text"))
+  nullValues.forEach((el) => {
+    if (el.innerHTML === "-1") {
+      el.innerHTML = "&infin;"
+    }
+  })
 }
