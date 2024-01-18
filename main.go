@@ -169,11 +169,11 @@ func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *
 		panic(fmt.Errorf("%v is not a valid query. %v", *queryFlag, allowed_q_desc))
 	}
 
-	if *labeledGraphFlag && !(*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") {
+	if *labeledGraphFlag && !(*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar" || *queryFlag == "AStarBAStar") {
 		panic(errors.New("you are asking to use a labeled graph with a non-labeled query. Please remove the --labeled flag or change the query"))
 	}
 
-	if (*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar") && !*labeledGraphFlag {
+	if (*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar" || *queryFlag == "AStarBAStar") && !*labeledGraphFlag {
 		panic(errors.New("you are asking to run a labeled query on a non-labled graph. Please add the --labeled flag or change the query"))
 	}
 
@@ -283,6 +283,8 @@ func createRandomQuery(n int) string {
 		} else {
 			return utils.SubsetSum(n)
 		}
+	case "AStarBAStar":
+		return utils.AStarBAStar()
 	default:
 		return "invalid"
 	}
@@ -334,6 +336,7 @@ var allowed_queries = map[string]bool{
 	"SmartTDP":           true,
 	"ShortestHamil":      true,
 	"SubsetSum":          true,
+	"AStarBAStar":        true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -346,4 +349,5 @@ var allowed_q_desc = `Available queries are :
 'AutomataAStarBStar' : a*b*, the automata way
 'SmartTDP' : two disjoint path using Cypher trail semantics
 'ShortestHamil': Shortest path variant of Hamiltonian path
-'SubsetSum' : Subset sum query`
+'SubsetSum' : Subset sum query
+'AStarBAstar' : a*ba*`

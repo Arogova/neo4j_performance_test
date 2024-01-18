@@ -123,6 +123,11 @@ func ShortestHamiltonian(n int) string {
 	`, n, n)
 }
 
+func AStarBAStar() string {
+	return `MATCH p = ()-[:a*]->()-[:b]->()-[:a*]->()
+	RETURN p`
+}
+
 //SQL
 
 func SubsetSumSQL(n int) string {
