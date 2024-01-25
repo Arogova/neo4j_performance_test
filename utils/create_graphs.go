@@ -110,3 +110,25 @@ func CreateRandomDoubleLineGraphScriptSQL(n int) []string {
 	queryWrapper = append(queryWrapper, query)
 	return queryWrapper
 }
+
+func CreateLabeledGraphScriptSQL(n int, p float64) []string {
+	query := make([]string, 0)
+	query = append(query, "DROP TABLE IF EXISTS A;")
+	query = append(query, "DROP TABLE IF EXISTS B;")
+	query = append(query, "CREATE TABLE A (id serial, s int, t int, primary key(s,t));")
+	query = append(query, "CREATE TABLE B (id serial, s int, t int, primary key(s,t));")
+
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if rand.Float64() <= p {
+				if rand.Float64() < 0.5 {
+					query = append(query, fmt.Sprintf("INSERT INTO A (s, t) VALUES (%d, %d);", i, j))
+				} else {
+					query = append(query, fmt.Sprintf("INSERT INTO B (s, t) VALUES (%d, %d);", i, j))
+				}
+			}
+		}
+	}
+
+	return query
+}

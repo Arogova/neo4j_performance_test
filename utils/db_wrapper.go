@@ -89,44 +89,6 @@ func executePostgresQuery(db *pgxpool.Pool, queryString string, resChan chan Que
 	totalTime, err := time.ParseDuration(strings.Join(strings.Split(strings.Split(result[len(result)-1], ": ")[1], " "), ""))
 	checkErr(err)
 	resChan <- QueryResult{QExecTime: int(totalTime.Milliseconds()), Found: nbResults > 0}
-
-	// if firstRow == "" {
-	// 	rows.Close()
-	// 	if pgconn.Timeout(rows.Err()) {
-	// 		resChan <- QueryResult{QExecTime: -1, Found: false}
-	// 		return
-	// 	} else {
-	// 		checkErr(rows.Err())
-	// 	}
-	// }
-
-	// if firstRow != "" {
-	// 	nbResults, err := strconv.Atoi(strings.Split(strings.Split(strings.Split(firstRow, "actual time")[1], "rows=")[1], " ")[0])
-
-	// 	checkErr(err)
-
-	// 	var totalTime time.Duration
-	// 	for rows.Next() {
-	// 		var row string
-	// 		err = rows.Scan(&row)
-	// 		checkErr(err)
-
-	// 		if strings.Contains(row, "Execution Time:") {
-	// 			totalTime, err = time.ParseDuration(strings.Join(strings.Split(strings.Split(row, ": ")[1], " "), ""))
-	// 			checkErr(err)
-	// 		}
-	// 	}
-	// 	rows.Close()
-	// 	resChan <- QueryResult{QExecTime: int(totalTime.Milliseconds()), Found: nbResults > 0}
-	// 	return
-	// }
-
-	// if strings.Contains(rows.Err().Error(), "timeout") || strings.Contains(rows.Err().Error(), "EOF") {
-	// 	resChan <- QueryResult{QExecTime: -1, Found: false}
-	// 	return
-	// } else {
-	// 	checkErr(rows.Err())
-	// }
 }
 
 func SetUpDB(ctx context.Context, db interface{}, createGraphQuery []string, n int) {

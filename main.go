@@ -84,9 +84,10 @@ func testSuite(ctx context.Context) {
 			for n := minNodes; n <= maxNodes; n += inc {
 				for reps := 0; reps < repeats; reps++ {
 					var createGraphQuery []string
-					if labeled {
+					if labeled && !postgres {
 						createGraphQuery = utils.CreateLabeledGraphScript(n, p)
-
+					} else if labeled && postgres {
+						createGraphQuery = utils.CreateLabeledGraphScriptSQL(n, p)
 					} else if postgres {
 						createGraphQuery = utils.CreateRandomGraphScriptSQL(n, p)
 					} else {
@@ -181,7 +182,7 @@ func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *
 		panic(errors.New("you are asking to run a value-dependant query on a non-valued graph. Please add the --doubleLine flag or change the query"))
 	}
 
-	if *postgresFlag && !(*queryFlag == "SubsetSum" || *queryFlag == "hamil" || *queryFlag == "euler") {
+	if *postgresFlag && !(*queryFlag == "SubsetSum" || *queryFlag == "hamil" || *queryFlag == "euler" || *queryFlag == "AStarBAStar") {
 		panic(errors.New("only subset sum, hamiltonian path and eulerian path queries are implemented for postgres. Please change the query or switch to Neo4j"))
 	}
 
@@ -284,7 +285,11 @@ func createRandomQuery(n int) string {
 			return utils.SubsetSum(n)
 		}
 	case "AStarBAStar":
-		return utils.AStarBAStar()
+		if postgres {
+			return utils.AStarBAStarSQL()
+		} else {
+			return utils.AStarBAStar()
+		}
 	default:
 		return "invalid"
 	}

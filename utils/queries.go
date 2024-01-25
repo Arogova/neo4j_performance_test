@@ -125,7 +125,7 @@ func ShortestHamiltonian(n int) string {
 
 func AStarBAStar() string {
 	return `MATCH p = ()-[:a*]->()-[:b]->()-[:a*]->()
-	RETURN p`
+	RETURN p LIMIT 1`
 }
 
 //SQL
@@ -164,5 +164,20 @@ func EulerianSQL() string {
 		FROM G, paths
 		WHERE src=endP AND (src,trg) <> ALL(path) AND  (trg,src) <> ALL(path))
 	SELECT * FROM paths WHERE ARRAY_LENGTH(path,1) = (SELECT COUNT(*)/2 FROM G)
+	LIMIT 1;`
+}
+
+func AStarBAStarSQL() string {
+	return `explain analyze with recursive a_star as (
+		select s, t, 0 as depth, array[s,t] as path, array[s||'.'|| t] as edges from A
+		union all
+		select A.s, A.t, a_star.depth+1, a_star.path||A.t, a_star.edges ||
+		concat(A.s||'.',A.t)
+		from A , a_star
+		where A.s=a_star.t
+		and not concat(A.s||'.',A.t)=any(a_star.edges)
+	)
+	select A1.s,A2.t from a_star A1, a_star A2, B
+	where A1.t=B.s and B.t=A2.s
 	LIMIT 1;`
 }
