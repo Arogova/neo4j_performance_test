@@ -19,6 +19,7 @@ function handleFiles() {
         timeout_results = compute_timeouts(results)
   
         createAverageHeatmap(format_average(nodePos, compute_average(results)), distinctNodes, "success-plot", filePath)
+        createMedianHeatmap(format_median(nodePos, compute_median(results)), distinctNodes, "median-plot", filePath)
         createTimeoutHeatmap(format_timeouts(nodePos, timeout_results), distinctNodes, "timeouts-plot", filePath)
         createMinNodeLineChart(format_min_nodes(timeout_results), "min-timeout-plot", filePath)
   
@@ -105,6 +106,85 @@ function createAverageHeatmap(formatted_average, distinctNodes, divId, filePath)
   averageChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
   averageChart.setOption(options)
 }
+
+function createMedianHeatmap(formatted_median, distinctNodes, divId, filePath) {
+  options = {
+    title: {
+      text: "Median execution time of " + getFullProblemName(filePath) + " in ms",
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10
+      },
+      left: 'center',
+      padding: [20, 0, 0, 0],
+    },
+    xAxis: {
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: distinctNodes,
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      },
+      offset: 20,
+    },
+    yAxis: {
+      name: "probability",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      type: "category",
+      data: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      axisLabel: {
+        fontSize: 24
+      },
+      splitArea: {
+        show: true
+      }
+    },
+    visualMap: {
+      min: 0,
+      max: 300000,
+      calculable: true,
+      inRange: {
+        color: ["#66bb6a", "#42a5f5"]
+      },
+      right: "20px",
+      top: "10%",
+      itemHeight: 550
+    },
+    series: [{
+      name: '',
+      type: "heatmap",
+      data: formatted_median,
+      coordinateSystem: "cartesian2d",
+      label: {
+        show: true,
+        align: 'center',
+        fontSize: 20
+      }
+    }],
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "median_execution_time",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  medianChart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  medianChart.setOption(options)
+}
+
 
 function createTimeoutHeatmap(formatted_timeouts, distinctNodes, divId, filePath) {
   options = {
@@ -342,7 +422,54 @@ function format_average(nodePos, average_results) {
       formatted.push({ value: [nodePos.get(el.order), probPos.get(el.probability), Math.round(parseFloat(el.avgExecTime))] })
     }
   })
+  return formatted
+}
 
+function compute_median(results) {
+  unformatted = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"] + ":" + res["edge probability"])) {
+      unformatted.push({
+        order: res["order"],
+        probability: res["edge probability"],
+        medExecTime: []
+      })
+      element_position.set(res["order"] + ":" + res["edge probability"], unformatted.length - 1)
+    }
+
+    elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
+
+    if (res["query execution time"] !== "timeout") {
+      unformatted[elementPos].medExecTime.push(parseInt(res["query execution time"]))
+    }
+  });
+
+  unformatted.forEach(el => {
+    el.medExecTime.sort((a, b) => a - b)
+    if (el.medExecTime.length % 2 == 1) {
+      median = el.medExecTime[(el.medExecTime.length+1)/2]
+    } else {
+      median = (el.medExecTime[el.medExecTime.length/2] + el.medExecTime[(el.medExecTime.length/2)+1])/2
+    }
+    el.medExecTime = median
+  })
+  return unformatted
+}
+
+function format_median(nodePos, average_results) {
+  formatted = []
+  average_results.forEach(el => {
+    if (el.medExecTime == -1) {
+      formatted.push({
+        value: [nodePos.get(el.order), probPos.get(el.probability), -1],
+        itemStyle: { color: "#ec7063" },
+        symbol: "circle"
+      })
+    } else {
+      formatted.push({ value: [nodePos.get(el.order), probPos.get(el.probability), Math.round(parseFloat(el.medExecTime))] })
+    }
+  })
   return formatted
 }
 
@@ -363,7 +490,7 @@ function compute_timeouts(results) {
 
 
     if (res["query execution time"] !== "timeout") {
-      unformatted[elementPos].percTimeout = unformatted[elementPos].percTimeout - 25
+      unformatted[elementPos].percTimeout = unformatted[elementPos].percTimeout - 5
     }
   });
 
@@ -446,7 +573,8 @@ function getFullProblemName(filePath) {
   problems = new Map([
     ["hamil", "Hamiltonian path"],
     ["euler", "Eulerian path"],
-    ["subset", "Subset sum"]
+    ["subset", "Subset sum"],
+    ["Star", "A*BA*"]
   ])
 
   problemName = "unknown problem"
