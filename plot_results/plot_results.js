@@ -398,7 +398,7 @@ function compute_average(results) {
 
     elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
 
-    if (res["query execution time"] !== "timeout") {
+    if (res["query execution time"] !== "timeout" && res["query execution time"] !== "OOM") {
       if (unformatted[elementPos].avgExecTime == -1) {
         unformatted[elementPos].avgExecTime = res["query execution time"]
       } else {
@@ -440,14 +440,16 @@ function compute_median(results) {
 
     elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
 
-    if (res["query execution time"] !== "timeout") {
+    if (res["query execution time"] !== "timeout" && res["query execution time"] !== "OOM") {
       unformatted[elementPos].medExecTime.push(parseInt(res["query execution time"]))
     }
   });
 
   unformatted.forEach(el => {
     el.medExecTime.sort((a, b) => a - b)
-    if (el.medExecTime.length % 2 == 1) {
+    if (el.medExecTime.length == 0) {
+      median = -1
+    } else if (el.medExecTime.length % 2 == 1) {
       median = el.medExecTime[(el.medExecTime.length+1)/2]
     } else {
       median = (el.medExecTime[el.medExecTime.length/2] + el.medExecTime[(el.medExecTime.length/2)+1])/2
@@ -489,7 +491,7 @@ function compute_timeouts(results) {
     elementPos = element_position.get(res["order"] + ":" + res["edge probability"])
 
 
-    if (res["query execution time"] !== "timeout") {
+    if (res["query execution time"] !== "timeout" && res["query execution time"] !== "OOM") {
       unformatted[elementPos].percTimeout = unformatted[elementPos].percTimeout - 5
     }
   });
@@ -535,7 +537,7 @@ function format_subsetsum_avg (results) {
 
     elementPos = element_position.get(res["order"])
 
-    if (res["query execution time"] !== "timeout") {
+    if (res["query execution time"] !== "timeout"  && res["query execution time"] !== "OOM") {
       if (formatted[elementPos] == "-") {
         formatted[elementPos] = res["query execution time"]
       } else {
