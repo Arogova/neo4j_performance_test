@@ -125,7 +125,24 @@ func ShortestHamiltonian(n int) string {
 
 func AStarBAStar() string {
 	return `MATCH p = ()-[:a*]->()-[:b]->()-[:a*]->()
-	RETURN p LIMIT 1`
+	RETURN p`
+}
+
+func IncreasingPath() string {
+	return `MATCH p=()-[*2..]->()
+	WITH p, reduce(acc=relationships(p)[0].val, v in relationships(p) | 
+		CASE
+			WHEN acc=-1 THEN -1
+			WHEN v.val>=acc THEN v.val
+			ELSE -1
+		END) AS inc
+	WHERE NOT inc = -1
+	RETURN p`
+}
+
+func IncreasingPathNode() string {
+	return `MATCH p=((x)-[:Edge]->(y) WHERE x.val<y.val)+
+	RETURN p`
 }
 
 //SQL
@@ -178,6 +195,5 @@ func AStarBAStarSQL() string {
 		and not concat(A.s||'.',A.t)=any(a_star.edges)
 	)
 	select A1.s,A2.t from a_star A1, a_star A2, B
-	where A1.t=B.s and B.t=A2.s
-	LIMIT 1;`
+	where A1.t=B.s and B.t=A2.s;`
 }

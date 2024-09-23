@@ -72,6 +72,39 @@ func CreateLabeledGraphScript(n int, p float64) []string {
 	return query
 }
 
+func CreateEdgeValueGraphScript(n int, p float64) []string {
+	query := make([]string, 0)
+	for i := 0; i < n; i++ {
+		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
+	}
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if rand.Float64() <= p {
+				value := rand.Intn(100)
+				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge {val:%d}]->(v2)", i, j, value)
+				query = append(query, edgeQuery)
+			}
+		}
+	}
+	return query
+}
+
+func CreateNodeValueGraphScript(n int, p float64) []string {
+	query := make([]string, 0)
+	for i := 0; i < n; i++ {
+		query = append(query, fmt.Sprintf("CREATE ({name:%d, val:%d})", i, rand.Intn(100)))
+	}
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if rand.Float64() <= p {
+				edgeQuery := fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge]->(v2)", i, j)
+				query = append(query, edgeQuery)
+			}
+		}
+	}
+	return query
+}
+
 // SQL
 
 //Note the representation of the undirected graph : for every undirected edge, we include both corresponding directed edges.

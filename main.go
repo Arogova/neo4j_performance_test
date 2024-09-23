@@ -84,7 +84,11 @@ func testSuite(ctx context.Context) {
 			for n := minNodes; n <= maxNodes; n += inc {
 				for reps := 0; reps < repeats; reps++ {
 					var createGraphQuery []string
-					if labeled && !postgres {
+					if edgeValue {
+						createGraphQuery = utils.CreateEdgeValueGraphScript(n, p)
+					} else if nodeValue {
+						createGraphQuery = utils.CreateNodeValueGraphScript(n, p)
+					} else if labeled && !postgres {
 						createGraphQuery = utils.CreateLabeledGraphScript(n, p)
 					} else if labeled && postgres {
 						createGraphQuery = utils.CreateLabeledGraphScriptSQL(n, p)
@@ -103,7 +107,7 @@ func testSuite(ctx context.Context) {
 
 func testRound(ctx context.Context, n int, p float64, createGraphQuery []string, resultFile *os.File, dumpFile *os.File) {
 	var ignore bool
-	for i := 0; i < 5; i++ {
+	for i := 0; i < graphRepeats; i++ {
 		if i == 0 {
 			ignore = true
 		}
@@ -119,6 +123,7 @@ func testRound(ctx context.Context, n int, p float64, createGraphQuery []string,
 			writeToFile(dumpFile, &formattedDump, true)
 		}
 		ignore = false
+		//fmt.Println("query executed successfuly")
 	}
 }
 
@@ -130,7 +135,8 @@ func setUpFlags() {
 	maxNodesFlag := flag.Int("maxNodes", 300, "How big the largest random graph should be")
 	incFlag := flag.Int("inc", 10, "How much bigger the graph should be after each iteration")
 	randSeedFlag := flag.Int64("seed", -1, "A seed for the rng. Will be generated using current time if ommited")
-	repeatsFlag := flag.Int("repeats", 5, "How many times each configuration should be tested")
+	repeatsFlag := flag.Int("repeats", 5, "How many times each configuration should be tested. A different graph will be generated for each repeat and be tested graphRepeats times.")
+	graphRepeatsFlag := flag.Int("graphRepeats", 5, "How many times each graph should be tested")
 	boltPortFlag := flag.Int64("port", 7687, "The server Bolt port.")
 	usernameFlag := flag.String("user", "neo4j", "")
 	passwordFlag := flag.String("pwd", "1234", "")
@@ -139,11 +145,13 @@ func setUpFlags() {
 	memgraphFlag := flag.Bool("memgraph", false, "Use this flag if running memGraph")
 	labeledGraphFlag := flag.Bool("labeled", false, "Use this flag if the query requires a labeled graph")
 	doubleLineGraphFlag := flag.Bool("doubleLine", false, "Use this flag if the query requires a double line graph")
+	edgeValueGraphFlag := flag.Bool("edgeValue", false, "Use this flag if the query require edge values")
+	nodeValueGraphFlag := flag.Bool("nodeValue", false, "Use this flag if the query require node values")
 	postgresFlag := flag.Bool("postgres", false, "Use this flag if running postgres")
 	dbNameFlag := flag.String("dbName", "", "Name of the SQL database to use (postgres only)")
 
 	flag.Parse()
-	checkFlags(queryFlag, labeledGraphFlag, doubleLineGraphFlag, postgresFlag, dbNameFlag)
+	checkFlags(queryFlag, labeledGraphFlag, doubleLineGraphFlag, edgeValueGraphFlag, nodeValueGraphFlag, postgresFlag, dbNameFlag)
 	initRandSeed(randSeedFlag)
 
 	start_p = *startFlag
@@ -153,8 +161,11 @@ func setUpFlags() {
 	maxNodes = *maxNodesFlag
 	inc = *incFlag
 	repeats = *repeatsFlag
+	graphRepeats = *graphRepeatsFlag
 	labeled = *labeledGraphFlag
 	doubleLine = *doubleLineGraphFlag
+	edgeValue = *edgeValueGraphFlag
+	nodeValue = *nodeValueGraphFlag
 	memgraph = *memgraphFlag
 	postgres = *postgresFlag
 	username = *usernameFlag
@@ -163,7 +174,7 @@ func setUpFlags() {
 	boltPort = *boltPortFlag
 }
 
-func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *bool, postgresFlag *bool, dbNameFlag *string) {
+func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *bool, edgeValueGraphFlag *bool, nodeValueGraphFlag *bool, postgresFlag *bool, dbNameFlag *string) {
 	if *queryFlag == "" {
 		panic(errors.New("please choose a query to run"))
 	} else if !allowed_queries[*queryFlag] {
@@ -172,6 +183,22 @@ func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *
 
 	if *labeledGraphFlag && !(*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar" || *queryFlag == "AStarBAStar") {
 		panic(errors.New("you are asking to use a labeled graph with a non-labeled query. Please remove the --labeled flag or change the query"))
+	}
+
+	if *edgeValueGraphFlag && !(*queryFlag == "IncreasingPath") {
+		panic(errors.New("you are asking to run a non-edge value query on a graph with edge values. Please remove the --edgeValue flag or change the query"))
+	}
+
+	if *queryFlag == "IncreasingPath" && !(*edgeValueGraphFlag) {
+		panic(errors.New("you are asking to run a query that requires edge values on a graph without edge values. Please add the --edgeValue flag or change the query"))
+	}
+
+	if *nodeValueGraphFlag && !(*queryFlag == "IncreasingNode") {
+		panic(errors.New("you are asking to run a non-node value query on a graph with node values. Please remove the --nodeValue flag or change the query"))
+	}
+
+	if *queryFlag == "IncreasingNode" && !(*nodeValueGraphFlag) {
+		panic(errors.New("you are asking to run a query that requires node values on a graph without node values. Please add the --nodeValue flag or change the query"))
 	}
 
 	if (*queryFlag == "NormalAStarBStar" || *queryFlag == "AutomataAStarBStar" || *queryFlag == "AStarBAStar") && !*labeledGraphFlag {
@@ -290,6 +317,18 @@ func createRandomQuery(n int) string {
 		} else {
 			return utils.AStarBAStar()
 		}
+	case "IncreasingPath":
+		if postgres {
+			return "invalid"
+		} else {
+			return utils.IncreasingPath()
+		}
+	case "IncreasingNode":
+		if postgres {
+			return "invalid"
+		} else {
+			return utils.IncreasingPathNode()
+		}
 	default:
 		return "invalid"
 	}
@@ -319,8 +358,11 @@ var start_p float64
 var end_p float64
 var seed int64
 var repeats int
+var graphRepeats int
 var labeled bool
 var doubleLine bool
+var edgeValue bool
+var nodeValue bool
 var memgraph bool
 var postgres bool
 var username string
@@ -342,6 +384,8 @@ var allowed_queries = map[string]bool{
 	"ShortestHamil":      true,
 	"SubsetSum":          true,
 	"AStarBAStar":        true,
+	"IncreasingPath":     true,
+	"IncreasingNode":     true,
 }
 var allowed_q_desc = `Available queries are :
 'tdp' : two disjoint paths
@@ -355,4 +399,6 @@ var allowed_q_desc = `Available queries are :
 'SmartTDP' : two disjoint path using Cypher trail semantics
 'ShortestHamil': Shortest path variant of Hamiltonian path
 'SubsetSum' : Subset sum query
-'AStarBAstar' : a*ba*`
+'AStarBAstar' : a*ba*
+'IncreasingPath' : Value increasing along the edges
+'IncreasingNode': Value increasing along the nodes`

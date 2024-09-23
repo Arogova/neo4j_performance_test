@@ -65,22 +65,28 @@ func executeNeo4jQuery(ctx context.Context, db neo4j.DriverWithContext, queryStr
 }
 
 func executePostgresQuery(db *pgxpool.Pool, queryString string, resChan chan QueryResult) {
-	//timeoutContext, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
-	//defer cancel()
+	// timeoutContext, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	// defer cancel()
 
 	rows, err := db.Query(context.Background(), queryString)
 	checkErr(err)
+	// rows, err := db.Query(timeoutContext, queryString)
+	// checkErr(err)
 
 	result, err := pgx.CollectRows(rows, pgx.RowTo[string])
+
+	// fmt.Printf("result: %v\n", result)
+	// checkErr(err)
 
 	// rows.Next()
 	// var firstRow string
 	// rows.Scan(&firstRow)
 
-	if pgconn.Timeout(rows.Err()) {
+	//if pgconn.Timeout(rows.Err()) {
+	if (rows.Err() != nil && strings.Contains(rows.Err().Error(), "timeout")) || pgconn.Timeout(rows.Err()) {
 		resChan <- QueryResult{QExecTime: -1, Found: false}
 		return
-	} else {
+	} else if rows.Err() != nil && rows.Err() != pgx.ErrNoRows {
 		checkErr(rows.Err())
 	}
 
