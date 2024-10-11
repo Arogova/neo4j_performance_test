@@ -399,6 +399,6 @@ var allowed_q_desc = `Available queries are :
 'SmartTDP' : two disjoint path using Cypher trail semantics
 'ShortestHamil': Shortest path variant of Hamiltonian path
 'SubsetSum' : Subset sum query
-'AStarBAstar' : a*ba*
+'AStarBAStar' : a*ba*
 'IncreasingPath' : Value increasing along the edges
 'IncreasingNode': Value increasing along the nodes`

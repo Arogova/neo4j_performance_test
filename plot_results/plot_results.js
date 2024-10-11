@@ -9,24 +9,257 @@ function handleFiles() {
       return h.trim();
     },
     complete: function (results) {
-      if (document.getElementById("subsetsum-checkbox").checked){
+      // if (document.getElementById("subsetsum-checkbox").checked){
+      //   distinctNodes = getDistinctNodes(results)
+      //   createSubsetSumChart(format_subsetsum_avg(results), distinctNodes, "subsetsum-plot")
+      // } else {
+        //nodePos = getNodeToPosMap(results)
         distinctNodes = getDistinctNodes(results)
-        createSubsetSumChart(format_subsetsum_avg(results), distinctNodes, "subsetsum-plot")
-      } else {
-        nodePos = getNodeToPosMap(results)
-        distinctNodes = getDistinctNodes(results)
   
-        timeout_results = compute_timeouts(results)
+        //timeout_results = compute_timeouts(results)
   
-        createAverageHeatmap(format_average(nodePos, compute_average(results)), distinctNodes, "success-plot", filePath)
-        createMedianHeatmap(format_median(nodePos, compute_median(results)), distinctNodes, "median-plot", filePath)
-        createTimeoutHeatmap(format_timeouts(nodePos, timeout_results), distinctNodes, "timeouts-plot", filePath)
-        createMinNodeLineChart(format_min_nodes(timeout_results), "min-timeout-plot", filePath)
-  
+        // createAverageHeatmap(format_average(nodePos, compute_average(results)), distinctNodes, "success-plot", filePath)
+        // createMedianHeatmap(format_median(nodePos, compute_median(results)), distinctNodes, "median-plot", filePath)
+        // createTimeoutHeatmap(format_timeouts(nodePos, timeout_results), distinctNodes, "timeouts-plot", filePath)
+        // createMinNodeLineChart(format_min_nodes(timeout_results), "min-timeout-plot", filePath)
+
+        createMedianAndTimeoutChart(formatMedianLineChart(results), formatTimeoutBarChart(results), distinctNodes, "plot", filePath)
         magic()
-      }
+      //}
     }
   });
+}
+
+function createAverageLineChart(formatted_results, distinctNodes, divId, filePath) {
+  options = {
+    title: {
+      text: "Average execution time of " + getFullProblemName(filePath) + " in ms",
+      textStyle: {
+        fontSize: 24,
+        lineHeight: 10,
+      },
+      padding: [20, 0, 0, 0],
+      left: 'center'
+    },
+    xAxis: {
+      type: "category",
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      data: distinctNodes,
+      axisLabel: {
+        fontSize: 24
+      },
+      offset: 20
+    },
+    yAxis: {
+      type: "value",
+      name: "avg exec time in ms",
+      nameTextStyle: {
+        fontSize: 24
+      },
+      axisLabel: {
+        fontSize: 24
+      }
+    },
+    series: {
+      type: "line",
+      smooth: true,
+      data: formatted_results,
+      label: {
+        show: true,
+        position: 'top',
+        fontSize: 20
+      }
+    },
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "avg_exec_line",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  chart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  chart.setOption(options)
+}
+
+function createMedianAndTimeoutChart (median_results, timeout_results, distinct_nodes, divId, filePath) {
+  options = {
+    // title: {
+    //   text: "Median execution time in ms and number of timeouts for " + getFullProblemName(filePath),
+    //   textStyle: {
+    //     fontSize: 30,
+    //     lineHeight: 10,
+    //   },
+    //   padding: [20, 0, 0, 0],
+    //   left: 'center'
+    // },
+    xAxis: {
+      type: "category",
+      name: "nodes",
+      nameTextStyle: {
+        fontSize: 30,
+      },
+      data: distinct_nodes,
+      axisLabel: {
+        fontSize: 30,
+        offset: 10
+      },
+      offset: 0
+    },
+    yAxis: [
+      {
+      type: "value",
+      name: "median execution time in ms",
+      min: 0,
+      max: 300000,
+      nameTextStyle: {
+        fontSize: 30
+      },
+      axisLabel: {
+        fontSize: 30
+      },
+      axisLine: {
+        show: true,
+        lineStyle: {
+          //color: 'rgb(0,114,178)',
+          color: 'rgb(0,158,115)',
+          width: 5,
+          type: 'solid'
+        }
+      }
+    },
+    {
+      type: "value",
+      name: "percentage of timeouts",
+      min: 0,
+      max: 100,
+      interval: 20,
+      nameTextStyle: {
+        fontSize: 30
+      },
+      axisLabel: {
+        fontSize: 30,
+        formatter: function(value, index){
+          return parseInt(value) + '%'
+        }
+      },
+      axisLine: {
+        show: true,
+        lineStyle: {
+          //color: 'rgb(213,94,0)',
+          color: 'rgb(204,121,167)',
+          width: 5,
+          type: 'solid'
+        }
+      }
+    }
+  ],
+    series: [{
+      type: "line",
+      smooth: true,
+      data: median_results,
+      yAxisIndex: 0,
+      label: {
+        show: true,
+        position: 'top',
+        fontSize: 20
+      },
+      lineStyle: {
+        //color: 'rgb(0,114,178)',
+        color: 'rgb(0,158,115)',
+        width: 10,
+        type: 'solid',
+        cap: 'round'
+      }
+    },
+    { 
+      type: "bar",
+      data: timeout_results,
+      yAxisIndex: 1,
+      itemStyle: {
+        //color: 'rgb(213,94,0)',
+        color: 'rgb(204,121,167)',
+      }
+    }
+  ],
+    toolbox: {
+      show: true,
+      feature: {
+        saveAsImage: {
+          show: true,
+          name: "avg_exec_line",
+          type: "svg"
+        }
+      }
+    }
+  }
+
+  chart = echarts.init(document.getElementById(divId), null, { renderer: "svg" })
+  chart.setOption(options)
+}
+
+function formatMedianLineChart(results){
+  pre_format = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"])) {
+      pre_format.push([])
+      element_position.set(res["order"], pre_format.length-1)
+    }
+
+    elementPos = element_position.get(res["order"])
+
+    if (res["query execution time"] !== "timeout"  && res["query execution time"] !== "OOM") {
+      pre_format[elementPos].push(parseInt(res["query execution time"]))
+    }
+  })
+
+  console.log(pre_format)
+
+  formatted = []
+  pre_format.forEach(el => {
+    el.sort((a, b) => a - b)
+    half = Math.floor(el.length/2)
+    if (el.length == 0) {
+      median = -1
+    } else if (el.length % 2 == 1) {
+      median = el[half]
+    } else {
+      median = (el[half-1] + el[half])/2
+    }
+    formatted.push(median)
+  })
+
+  console.log(formatted)
+
+  if (formatted.includes(-1) ) return formatted.slice(0, formatted.indexOf(-1))
+  else return formatted
+}
+
+function formatTimeoutBarChart(results){
+  formatted = []
+  element_position = new Map()
+  results.data.forEach(res => {
+    if (!element_position.has(res["order"])) {
+      formatted.push(100)
+      element_position.set(res["order"], formatted.length-1)
+    }
+
+    elementPos = element_position.get(res["order"])
+
+    if (res["query execution time"] !== "timeout"  && res["query execution time"] !== "OOM") {
+      formatted[elementPos] = formatted[elementPos]-5
+    }
+  })
+
+  return formatted
 }
 
 function createAverageHeatmap(formatted_average, distinctNodes, divId, filePath) {
