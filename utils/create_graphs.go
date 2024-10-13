@@ -37,16 +37,20 @@ func CreateRandomGraphScript(n int, p float64) []string {
 
 func CreateRandomDoubleLineGraphScript(n int) []string {
 	query := make([]string, 0)
-	for i := 0; i < n; i++ {
-		query = append(query, fmt.Sprintf("CREATE ({name:%d})", i))
+	
+	query = append(query, `CREATE (:Start {name:"0"})`)
+	for i := 1; i < n-1; i++ {
+		query = append(query, fmt.Sprintf(`CREATE ({name:"%d"})`, i))
 	}
+	query = append(query, fmt.Sprintf(`CREATE (:End {name:"%d"})`, n-1))
 
-	query = append(query, "MATCH (v1{name:0}) MATCH (v2{name:1}) CREATE (v1)-[:Edge {value:1}]->(v2)")
-	query = append(query, fmt.Sprintf("MATCH (v1{name:0}) MATCH (v2{name:1}) CREATE (v1)-[:Edge {value:%d}]->(v2)", getRandomInteger(10)))
+	
+	query = append(query, `MATCH (v1{name:"0"}) MATCH (v2{name:"1"}) CREATE (v1)-[:Edge {value:1}]->(v2)`)
+	query = append(query, fmt.Sprintf(`MATCH (v1{name:"0"}) MATCH (v2{name:"1"}) CREATE (v1)-[:Edge {value:%d}]->(v2)`, getRandomInteger(10)))
 
 	for i := 1; i < n-1; i++ {
-		query = append(query, fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge {value:0}]->(v2)", i, i+1))
-		query = append(query, fmt.Sprintf("MATCH (v1{name:%d}) MATCH (v2{name:%d}) CREATE (v1)-[:Edge {value:%d}]->(v2)", i, i+1, getRandomInteger(10)))
+		query = append(query, fmt.Sprintf(`MATCH (v1{name:"%d"}) MATCH (v2{name:"%d"}) CREATE (v1)-[:Edge {value:0}]->(v2)`, i, i+1))
+		query = append(query, fmt.Sprintf(`MATCH (v1{name:"%d"}) MATCH (v2{name:"%d"}) CREATE (v1)-[:Edge {value:%d}]->(v2)`, i, i+1, getRandomInteger(10)))
 	}
 
 	return query

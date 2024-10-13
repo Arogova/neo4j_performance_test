@@ -105,12 +105,16 @@ func AutomataAStarBStar() string {
 }
 
 func SubsetSum(n int) string {
-	return fmt.Sprintf(
-		`MATCH p = allShortestPaths(({name:0})-[:Edge*]->({name:%d}))
+	// return fmt.Sprintf(
+	// 	`MATCH p = allShortestPaths(({name:0})-[:Edge*]->({name:%d}))
+	// WITH [r in relationships(p) | r.value] as values, p
+	// WITH reduce(sum=0, v in values | sum+v) as sum, p
+	// WHERE sum=0
+	// RETURN p`, n-1)
+	return `MATCH p = allShortestPaths((:Start)-[:Edge*]->(:End))
 	WITH [r in relationships(p) | r.value] as values, p
-	WITH reduce(sum=0, v in values | sum+v) as sum, p
-	WHERE sum=0
-	RETURN p`, n-1)
+	WHERE reduce(sum = 0, v in values | sum+v) = 1
+	RETURN p`
 }
 
 func ShortestHamiltonian(n int) string {
