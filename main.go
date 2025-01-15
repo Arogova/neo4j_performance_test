@@ -12,6 +12,8 @@ import (
 
 	"github.com/Arogova/neo4j_performance_test/utils"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"database/sql"
+	_ "github.com/marcboeker/go-duckdb"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -22,6 +24,8 @@ func main() {
 
 	if postgres {
 		connectToPostgres()
+	} else if duckDB {
+		connectToDuckDB()
 	} else {
 		connectToNeo4j(ctx)
 	}
@@ -31,6 +35,8 @@ func main() {
 		defer utils.HandleClose(ctx, db.(neo4j.DriverWithContext))
 	case *pgxpool.Pool:
 		defer db.(*pgxpool.Pool).Close()
+	case *sql.DB:
+		defer db.(*sql.DB).Close()
 	default:
 		panic(errors.New("Defer close : Database type unknown. This should not happen!"))
 	}
@@ -59,18 +65,32 @@ func connectToPostgres() {
 	db = newDB
 }
 
+func connectToDuckDB() {
+	var err error
+
+	dbFile := "graph_query_tests.duckdb"
+	db, err = sql.Open("duckdb", dbFile)
+	checkErr(err)
+}
+
 func testSuite(ctx context.Context) {
 	resultFile, dumpFile := createFiles(queryType)
 	defer resultFile.Close()
 	defer dumpFile.Close()
 
 	utils.CleanUpDB(ctx, db, -1)
+	
+	if duckDB {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(context.Background(), time.Duration(time.Minute*5)) 
+		defer cancel()
+	}
 
 	if doubleLine {
 		for n := minNodes; n <= maxNodes; n += inc {
 			for reps := 0; reps < repeats; reps++ {
 				var createGraphQuery []string
-				if postgres {
+				if postgres || duckDB {
 					createGraphQuery = utils.CreateRandomDoubleLineGraphScriptSQL(n)
 				} else {
 					createGraphQuery = utils.CreateRandomDoubleLineGraphScript(n)
@@ -88,11 +108,13 @@ func testSuite(ctx context.Context) {
 						createGraphQuery = utils.CreateEdgeValueGraphScript(n, p)
 					} else if nodeValue {
 						createGraphQuery = utils.CreateNodeValueGraphScript(n, p)
-					} else if labeled && !postgres {
+					} else if labeled && !(postgres || duckDB){
 						createGraphQuery = utils.CreateLabeledGraphScript(n, p)
 					} else if labeled && postgres {
 						createGraphQuery = utils.CreateLabeledGraphScriptSQL(n, p)
-					} else if postgres {
+					} else if labeled && duckDB {
+						createGraphQuery = utils.CreateLabeledGraphScriptDuckDB(n,p)
+					} else if postgres || duckDB {
 						createGraphQuery = utils.CreateRandomGraphScriptSQL(n, p)
 					} else {
 						createGraphQuery = utils.CreateRandomGraphScript(n, p)
@@ -148,10 +170,11 @@ func setUpFlags() {
 	edgeValueGraphFlag := flag.Bool("edgeValue", false, "Use this flag if the query require edge values")
 	nodeValueGraphFlag := flag.Bool("nodeValue", false, "Use this flag if the query require node values")
 	postgresFlag := flag.Bool("postgres", false, "Use this flag if running postgres")
+	duckDBFlag := flag.Bool("duckDB", false, "Use this flag if running duckDB")
 	dbNameFlag := flag.String("dbName", "", "Name of the SQL database to use (postgres only)")
 
 	flag.Parse()
-	checkFlags(queryFlag, labeledGraphFlag, doubleLineGraphFlag, edgeValueGraphFlag, nodeValueGraphFlag, postgresFlag, dbNameFlag)
+	checkFlags(queryFlag, labeledGraphFlag, doubleLineGraphFlag, edgeValueGraphFlag, nodeValueGraphFlag, postgresFlag, duckDBFlag, dbNameFlag)
 	initRandSeed(randSeedFlag)
 
 	start_p = *startFlag
@@ -168,13 +191,14 @@ func setUpFlags() {
 	nodeValue = *nodeValueGraphFlag
 	memgraph = *memgraphFlag
 	postgres = *postgresFlag
+	duckDB = *duckDBFlag
 	username = *usernameFlag
 	pwd = *passwordFlag
 	dbName = *dbNameFlag
 	boltPort = *boltPortFlag
 }
 
-func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *bool, edgeValueGraphFlag *bool, nodeValueGraphFlag *bool, postgresFlag *bool, dbNameFlag *string) {
+func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *bool, edgeValueGraphFlag *bool, nodeValueGraphFlag *bool, postgresFlag *bool, duckDBFlag *bool, dbNameFlag *string) {
 	if *queryFlag == "" {
 		panic(errors.New("please choose a query to run"))
 	} else if !allowed_queries[*queryFlag] {
@@ -209,12 +233,16 @@ func checkFlags(queryFlag *string, labeledGraphFlag *bool, doubleLineGraphFlag *
 		panic(errors.New("you are asking to run a value-dependant query on a non-valued graph. Please add the --doubleLine flag or change the query"))
 	}
 
-	if *postgresFlag && !(*queryFlag == "SubsetSum" || *queryFlag == "hamil" || *queryFlag == "euler" || *queryFlag == "AStarBAStar") {
-		panic(errors.New("only subset sum, hamiltonian path and eulerian path queries are implemented for postgres. Please change the query or switch to Neo4j"))
+	if (*postgresFlag || *duckDBFlag) && !(*queryFlag == "SubsetSum" || *queryFlag == "hamil" || *queryFlag == "euler" || *queryFlag == "AStarBAStar") {
+		panic(errors.New("only subset sum, hamiltonian path and eulerian path queries are implemented for postgres and duckDB. Please change the query or switch to Neo4j"))
 	}
 
 	if *postgresFlag && *dbNameFlag == "" {
 		panic(errors.New("please provide the name of the database to run the tests on. The database must be created before running this program"))
+	}
+
+	if *postgresFlag && *duckDBFlag {
+		panic(errors.New("please choose only one system"))
 	}
 }
 
@@ -278,7 +306,7 @@ func createRandomQuery(n int) string {
 	case "hamil":
 		if memgraph {
 			return utils.HamiltonianPathMemgraph()
-		} else if postgres {
+		} else if postgres || duckDB {
 			return utils.HamiltonianSQL()
 		} else {
 			return utils.HamiltonianPath()
@@ -292,7 +320,7 @@ func createRandomQuery(n int) string {
 	case "euler":
 		if memgraph {
 			return utils.EulerianTrailMemgraph()
-		} else if postgres {
+		} else if postgres  || duckDB {
 			return utils.EulerianSQL()
 		} else {
 			return utils.EulerianTrail()
@@ -306,25 +334,27 @@ func createRandomQuery(n int) string {
 	case "ShortestHamil":
 		return utils.ShortestHamiltonian(n)
 	case "SubsetSum":
-		if postgres {
+		if postgres  || duckDB {
 			return utils.SubsetSumSQL(n)
 		} else {
 			return utils.SubsetSum(n)
 		}
 	case "AStarBAStar":
-		if postgres {
+		if postgres  {
 			return utils.AStarBAStarSQL()
+		} else if duckDB {
+			return utils.AStarBAStarDuckDB()
 		} else {
 			return utils.AStarBAStar()
 		}
 	case "IncreasingPath":
-		if postgres {
+		if postgres  || duckDB {
 			return "invalid"
 		} else {
 			return utils.IncreasingPath()
 		}
 	case "IncreasingNode":
-		if postgres {
+		if postgres  || duckDB {
 			return "invalid"
 		} else {
 			return utils.IncreasingPathNode()
@@ -365,6 +395,7 @@ var edgeValue bool
 var nodeValue bool
 var memgraph bool
 var postgres bool
+var duckDB bool
 var username string
 var pwd string
 var dbName string

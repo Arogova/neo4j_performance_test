@@ -12,6 +12,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"database/sql"
+	_ "github.com/marcboeker/go-duckdb"
 )
 
 // Executes the query given as argument
@@ -22,6 +24,8 @@ func ExecuteQuery(ctx context.Context, db interface{}, queryString string, resCh
 		executeNeo4jQuery(ctx, db.(neo4j.DriverWithContext), queryString, resChan, memgraph)
 	case *pgxpool.Pool:
 		executePostgresQuery(db.(*pgxpool.Pool), queryString, resChan)
+	case *sql.DB:
+		executeDuckDBQuery(ctx, db.(*sql.DB), queryString, resChan)
 	default:
 		panic(errors.New("ExecuteQuery : Database type unknown. This should not happen!"))
 	}
@@ -97,12 +101,33 @@ func executePostgresQuery(db *pgxpool.Pool, queryString string, resChan chan Que
 	resChan <- QueryResult{QExecTime: int(totalTime.Milliseconds()), Found: nbResults > 0}
 }
 
+func executeDuckDBQuery(ctx context.Context, db *sql.DB, queryString string, resChan chan QueryResult) {
+	startTime := time.Now()
+	rows, err := db.QueryContext(ctx, queryString)
+	endTime := time.Now()
+	defer rows.Close()
+	if err != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
+		resChan <- QueryResult{QExecTime: -1, Found: false}
+		return
+	} else if err != nil {
+		panic(err)
+	} else {
+		if rows.Next() {
+			resChan <- QueryResult{QExecTime: int(endTime.Sub(startTime).Milliseconds()), Found: true}
+		} else {
+			resChan <- QueryResult{QExecTime: int(endTime.Sub(startTime).Milliseconds()), Found: false}
+		}
+	}
+}
+
 func SetUpDB(ctx context.Context, db interface{}, createGraphQuery []string, n int) {
 	switch db.(type) {
 	case neo4j.DriverWithContext:
 		setUpNeo4jDB(ctx, db.(neo4j.DriverWithContext), createGraphQuery, n)
 	case *pgxpool.Pool:
 		setUpPostgresDB(ctx, db.(*pgxpool.Pool), createGraphQuery)
+	case *sql.DB:
+		SetUpDuckDB(ctx, db.(*sql.DB), createGraphQuery)
 	default:
 		panic(errors.New("ExecuteQuery : Database type unknown. This should not happen!"))
 	}
@@ -129,11 +154,19 @@ func setUpPostgresDB(ctx context.Context, db *pgxpool.Pool, createGraphQuery []s
 	}
 }
 
+func SetUpDuckDB(ctx context.Context, db *sql.DB, createGraphQuery []string) {
+	for _, subQuery := range createGraphQuery {
+		_, err := db.Exec(subQuery)
+		checkErr(err)
+	}
+}
+
 func CleanUpDB(ctx context.Context, db interface{}, n int) {
 	switch db.(type) {
 	case neo4j.DriverWithContext:
 		cleanUpNeo4j(ctx, db.(neo4j.DriverWithContext), n)
 	case *pgxpool.Pool: //SQL create graph queries already drop the required tables
+	case *sql.DB:
 	default:
 		panic(errors.New("CleanUpDB : Database type unknown. This should not happen!"))
 	}

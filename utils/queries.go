@@ -33,7 +33,7 @@ func HamiltonianPathMemgraph() string {
 func HamiltonianPath() string {
 	return `MATCH (n)
   WITH collect(n.name) AS allNodes
-  MATCH path=(s)-[:Edge*]-(t)
+  MATCH path=(:Start)-[:Edge*]-()
   WITH path, allNodes, [y in nodes(path) | y.name] as nodesInPath
   WHERE all(node in allNodes where node in nodesInPath)
   AND size(allNodes)=size(nodesInPath)
@@ -201,3 +201,17 @@ func AStarBAStarSQL() string {
 	select A1.s,A2.t from a_star A1, a_star A2, B
 	where A1.t=B.s and B.t=A2.s;`
 }
+
+func AStarBAStarDuckDB() string {
+	return `explain analyze WITH RECURSIVE a_star AS (
+    SELECT s, t, 0 AS depth, ARRAY[s, t] AS path, ARRAY[s || '.'|| t] AS edges FROM A
+    UNION
+    SELECT A.s::VARCHAR, A.t::VARCHAR, a_star.depth + 1, a_star.path || ARRAY[A.t], CONCAT(a_star.edges, ARRAY[A.s || '.' || A.t])
+    FROM A, a_star
+    WHERE A.s = a_star.t
+    AND NOT A.s || '.' || A.t IN (SELECT UNNEST(a_star.edges))
+	)
+	SELECT A1.s, A2.t 
+	FROM a_star A1, a_star A2, B
+	WHERE A1.t = B.s AND B.t = A2.s;`
+}	

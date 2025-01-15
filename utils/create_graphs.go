@@ -32,6 +32,8 @@ func CreateRandomGraphScript(n int, p float64) []string {
 			}
 		}
 	}
+	rand_start_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("MATCH (n {name:%d}) SET n :Start", rand_start_node))
 	return query
 }
 
@@ -169,3 +171,27 @@ func CreateLabeledGraphScriptSQL(n int, p float64) []string {
 
 	return query
 }
+
+func CreateLabeledGraphScriptDuckDB(n int, p float64) []string {
+	query := make([]string, 0)
+	query = append(query, "DROP TABLE IF EXISTS A;")
+	query = append(query, "DROP TABLE IF EXISTS B;")
+	query = append(query, "CREATE OR REPLACE SEQUENCE serial START 1;")
+	query = append(query, "CREATE TABLE A (id INTEGER DEFAULT nextval('serial'), s int, t int, primary key(s,t));")
+	query = append(query, "CREATE TABLE B (id INTEGER DEFAULT nextval('serial'), s int, t int, primary key(s,t));")
+
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if rand.Float64() <= p {
+				if rand.Float64() < 0.5 {
+					query = append(query, fmt.Sprintf("INSERT INTO A (s, t) VALUES (%d, %d);", i, j))
+				} else {
+					query = append(query, fmt.Sprintf("INSERT INTO B (s, t) VALUES (%d, %d);", i, j))
+				}
+			}
+		}
+	}
+
+	return query
+}
+
