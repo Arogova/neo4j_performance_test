@@ -34,6 +34,8 @@ func CreateRandomGraphScript(n int, p float64) []string {
 	}
 	rand_start_node := rand.Intn(n)
 	query = append(query, fmt.Sprintf("MATCH (n {name:%d}) SET n :Start", rand_start_node))
+	rand_end_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("MATCH (n {name:%d}) SET n :End", rand_end_node))
 	return query
 }
 
@@ -75,6 +77,11 @@ func CreateLabeledGraphScript(n int, p float64) []string {
 			}
 		}
 	}
+
+	rand_start_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("MATCH (n {name:%d}) SET n :Start", rand_start_node))
+	rand_end_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("MATCH (n {name:%d}) SET n :End", rand_end_node))
 	return query
 }
 
@@ -154,8 +161,12 @@ func CreateLabeledGraphScriptSQL(n int, p float64) []string {
 	query := make([]string, 0)
 	query = append(query, "DROP TABLE IF EXISTS A;")
 	query = append(query, "DROP TABLE IF EXISTS B;")
+	query = append(query, "DROP TABLE IF EXISTS StartLabel;")
+	query = append(query, "DROP TABLE IF EXISTS EndLabel;")
 	query = append(query, "CREATE TABLE A (id serial, s int, t int, primary key(s,t));")
 	query = append(query, "CREATE TABLE B (id serial, s int, t int, primary key(s,t));")
+	query = append(query, "CREATE TABLE StartLabel (node int);")
+	query = append(query, "CREATE TABLE EndLabel (node int);")
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -168,6 +179,11 @@ func CreateLabeledGraphScriptSQL(n int, p float64) []string {
 			}
 		}
 	}
+
+	rand_start_node := rand.Intn(n)
+	rand_end_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("INSERT INTO StartLabel VALUES (%d)", rand_start_node))
+	query = append(query, fmt.Sprintf("INSERT INTO EndLabel VALUES (%d)", rand_end_node))
 
 	return query
 }
@@ -176,9 +192,13 @@ func CreateLabeledGraphScriptDuckDB(n int, p float64) []string {
 	query := make([]string, 0)
 	query = append(query, "DROP TABLE IF EXISTS A;")
 	query = append(query, "DROP TABLE IF EXISTS B;")
+	query = append(query, "DROP TABLE IF EXISTS StartLabel;")
+	query = append(query, "DROP TABLE IF EXISTS EndLabel;")
 	query = append(query, "CREATE OR REPLACE SEQUENCE serial START 1;")
 	query = append(query, "CREATE TABLE A (id INTEGER DEFAULT nextval('serial'), s int, t int, primary key(s,t));")
 	query = append(query, "CREATE TABLE B (id INTEGER DEFAULT nextval('serial'), s int, t int, primary key(s,t));")
+	query = append(query, "CREATE TABLE StartLabel (node int);")
+	query = append(query, "CREATE TABLE EndLabel (node int);")
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -191,6 +211,11 @@ func CreateLabeledGraphScriptDuckDB(n int, p float64) []string {
 			}
 		}
 	}
+
+	rand_start_node := rand.Intn(n)
+	rand_end_node := rand.Intn(n)
+	query = append(query, fmt.Sprintf("INSERT INTO StartLabel VALUES (%d)", rand_start_node))
+	query = append(query, fmt.Sprintf("INSERT INTO EndLabel VALUES (%d)", rand_end_node))
 
 	return query
 }

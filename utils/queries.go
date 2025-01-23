@@ -128,8 +128,8 @@ func ShortestHamiltonian(n int) string {
 }
 
 func AStarBAStar() string {
-	return `MATCH p = ()-[:a*]->()-[:b]->()-[:a*]->()
-	RETURN p`
+	return `MATCH p = (:Start)-[:a*]->()-[:b]->()-[:a*]->(:End)
+	RETURN p LIMIT 1`
 }
 
 func IncreasingPath() string {
@@ -189,29 +189,52 @@ func EulerianSQL() string {
 }
 
 func AStarBAStarSQL() string {
-	return `explain analyze with recursive a_star as (
-		select s, t, 0 as depth, array[s,t] as path, array[s||'.'|| t] as edges from A
-		union all
-		select A.s, A.t, a_star.depth+1, a_star.path||A.t, a_star.edges ||
-		concat(A.s||'.',A.t)
-		from A , a_star
-		where A.s=a_star.t
-		and not concat(A.s||'.',A.t)=any(a_star.edges)
+	return `explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
 	)
-	select A1.s,A2.t from a_star A1, a_star A2, B
-	where A1.t=B.s and B.t=A2.s;`
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;`
 }
 
 func AStarBAStarDuckDB() string {
-	return `explain analyze WITH RECURSIVE a_star AS (
-    SELECT s, t, 0 AS depth, ARRAY[s, t] AS path, ARRAY[s || '.'|| t] AS edges FROM A
-    UNION
-    SELECT A.s::VARCHAR, A.t::VARCHAR, a_star.depth + 1, a_star.path || ARRAY[A.t], CONCAT(a_star.edges, ARRAY[A.s || '.' || A.t])
-    FROM A, a_star
-    WHERE A.s = a_star.t
-    AND NOT A.s || '.' || A.t IN (SELECT UNNEST(a_star.edges))
+	// return `explain analyze WITH RECURSIVE a_star AS (
+    // SELECT s, t, 0 AS depth, ARRAY[s, t] AS path, ARRAY[s || '.'|| t] AS edges FROM A
+    // UNION
+    // SELECT A.s::VARCHAR, A.t::VARCHAR, a_star.depth + 1, a_star.path || ARRAY[A.t], CONCAT(a_star.edges, ARRAY[A.s || '.' || A.t])
+    // FROM A, a_star
+    // WHERE A.s = a_star.t
+    // AND NOT A.s || '.' || A.t IN (SELECT UNNEST(a_star.edges))
+	// )
+	// SELECT A1.s, A2.t 
+	// FROM a_star A1, a_star A2, B
+	// WHERE A1.t = B.s AND B.t = A2.s;`
+
+	return `explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s::VARCHAR, A.t::VARCHAR, a_kleene_star.depth+1,
+				a_kleene_star.path|| ARRAY[A.t],
+				 CONCAT(a_kleene_star.edges, ARRAY[A.s || '.' || A.t])
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t) IN (SELECT UNNEST(a_kleene_star.edges))
 	)
-	SELECT A1.s, A2.t 
-	FROM a_star A1, a_star A2, B
-	WHERE A1.t = B.s AND B.t = A2.s;`
-}	
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;`
+}
