@@ -1,0 +1,4901 @@
+seed = 1738146927236623525
+2,1,19,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,19,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,13,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+2,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,true,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,15,false,11:35:27
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,18,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,19,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,18,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,18,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+3,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,14,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,15,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,15,false,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,18,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,18,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,18,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,18,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (0)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,13,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,13,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,13,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,13,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+4,1,16,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,17,true,11:35:28
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,17,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,18,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,18,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,16,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,16,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,16,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,16,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (2)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,13,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,13,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,14,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,13,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,14,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,14,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (1)
+INSERT INTO EndLabel VALUES (1)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+5,1,15,true,11:35:29
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,712,true,11:35:30
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO B (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO A (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,712,true,11:35:31
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO B (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO A (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,713,true,11:35:32
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO B (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO A (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,710,true,11:35:33
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO B (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO B (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO B (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO A (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,timeout,false,11:45:33
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,timeout,false,11:50:33
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,timeout,false,11:55:33
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,timeout,false,12:00:33
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO A (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO A (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO B (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO A (s, t) VALUES (3, 2);
+INSERT INTO B (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO B (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (0)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,1820,true,12:00:36
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO B (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,1816,true,12:00:38
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO B (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,1831,true,12:00:40
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO B (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,1825,true,12:00:42
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO B (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO A (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO A (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO A (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO A (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO B (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO B (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO B (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (2)
+INSERT INTO EndLabel VALUES (3)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,279,true,12:00:43
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,276,true,12:00:43
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,275,true,12:00:43
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,278,true,12:00:43
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO A (s, t) VALUES (0, 0);
+INSERT INTO B (s, t) VALUES (0, 1);
+INSERT INTO B (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO A (s, t) VALUES (0, 5);
+INSERT INTO B (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO B (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO B (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO B (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO A (s, t) VALUES (2, 4);
+INSERT INTO B (s, t) VALUES (2, 5);
+INSERT INTO A (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO B (s, t) VALUES (3, 4);
+INSERT INTO B (s, t) VALUES (3, 5);
+INSERT INTO A (s, t) VALUES (4, 0);
+INSERT INTO A (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO A (s, t) VALUES (4, 3);
+INSERT INTO B (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO B (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (4)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,205903,true,12:07:34
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,205818,true,12:11:00
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,205435,true,12:14:26
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
+6,1,205291,true,12:17:51
+DROP TABLE IF EXISTS A;
+DROP TABLE IF EXISTS B;
+DROP TABLE IF EXISTS StartLabel;
+DROP TABLE IF EXISTS EndLabel;
+CREATE TABLE A (id serial, s int, t int, primary key(s,t));
+CREATE TABLE B (id serial, s int, t int, primary key(s,t));
+CREATE TABLE StartLabel (node int);
+CREATE TABLE EndLabel (node int);
+INSERT INTO B (s, t) VALUES (0, 0);
+INSERT INTO A (s, t) VALUES (0, 1);
+INSERT INTO A (s, t) VALUES (0, 2);
+INSERT INTO A (s, t) VALUES (0, 3);
+INSERT INTO B (s, t) VALUES (0, 4);
+INSERT INTO B (s, t) VALUES (0, 5);
+INSERT INTO A (s, t) VALUES (1, 0);
+INSERT INTO B (s, t) VALUES (1, 1);
+INSERT INTO B (s, t) VALUES (1, 2);
+INSERT INTO A (s, t) VALUES (1, 3);
+INSERT INTO A (s, t) VALUES (1, 4);
+INSERT INTO A (s, t) VALUES (1, 5);
+INSERT INTO B (s, t) VALUES (2, 0);
+INSERT INTO A (s, t) VALUES (2, 1);
+INSERT INTO A (s, t) VALUES (2, 2);
+INSERT INTO B (s, t) VALUES (2, 3);
+INSERT INTO B (s, t) VALUES (2, 4);
+INSERT INTO A (s, t) VALUES (2, 5);
+INSERT INTO B (s, t) VALUES (3, 0);
+INSERT INTO B (s, t) VALUES (3, 1);
+INSERT INTO B (s, t) VALUES (3, 2);
+INSERT INTO A (s, t) VALUES (3, 3);
+INSERT INTO A (s, t) VALUES (3, 4);
+INSERT INTO A (s, t) VALUES (3, 5);
+INSERT INTO B (s, t) VALUES (4, 0);
+INSERT INTO B (s, t) VALUES (4, 1);
+INSERT INTO A (s, t) VALUES (4, 2);
+INSERT INTO B (s, t) VALUES (4, 3);
+INSERT INTO A (s, t) VALUES (4, 4);
+INSERT INTO A (s, t) VALUES (4, 5);
+INSERT INTO A (s, t) VALUES (5, 0);
+INSERT INTO A (s, t) VALUES (5, 1);
+INSERT INTO A (s, t) VALUES (5, 2);
+INSERT INTO A (s, t) VALUES (5, 3);
+INSERT INTO A (s, t) VALUES (5, 4);
+INSERT INTO B (s, t) VALUES (5, 5);
+INSERT INTO StartLabel VALUES (3)
+INSERT INTO EndLabel VALUES (5)
+
+
+explain analyze WITH RECURSIVE a_kleene_star AS (
+		SELECT s, t, 0 AS depth, array[s,t] AS path,
+				array[s||'.'|| t] AS edges FROM A
+		UNION
+		SELECT A.s, A.t, a_kleene_star.depth+1,
+				a_kleene_star.path||A.t,
+				a_kleene_star.edges ||
+				concat(A.s||'.',A.t)
+		FROM A , a_kleene_star
+		WHERE A.s=a_kleene_star.t AND
+		NOT concat(A.s||'.',A.t)=any(a_kleene_star.edges)
+	)
+	SELECT A1.s, A2.t
+	FROM a_kleene_star A1, a_kleene_star A2, B, StartLabel, EndLabel
+	WHERE A1.t=B.s AND B.t=A2.s AND A1.s=StartLabel.node AND
+		A2.t=EndLabel.node AND NOT (A1.edges && A2.edges) 
+	LIMIT 1;
+------
