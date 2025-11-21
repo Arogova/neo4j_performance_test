@@ -5,8 +5,8 @@ To get it running you need :
 - The database management system you want to test. The currently supported systems are: 
   - [Neo4j](https://neo4j.com/docs/operations-manual/current/installation/) (tested with 5.18.1)
   - [postgres](https://www.postgresql.org/download/)
-  - [DuckDB] (https://duckdb.org/install/?platform=linux&environment=cli)
-  - [Memgraph] (https://memgraph.com/download)
+  - [DuckDB](https://duckdb.org/install/?platform=linux&environment=cli)
+  - [Memgraph](https://memgraph.com/download)
 
 For Neo4j, the timeout parameter must be set within the configuration file. To find the correct file refer to the default locations of Neo4j files described [here](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/). 
 To set up query timeout add the following two lines add the end of `neo4j.conf`
@@ -21,8 +21,8 @@ To connect to Neo4j or postgres, the system requires a username and password, wh
 To connect to postgres, the system also requires a database name which you can set with the argument `--dbName`. This name should refer to an existing database. You can find instructions on how to set up a new postgres database [here](https://www.postgresql.org/docs/current/tutorial-createdb.html). 
 
 The chosen DBMS should be running in the background at the same time as the testing program. 
-On linux-based systems the Neo4j server can be launched with `systemctl start neo4j` restarted with `systemctl restart neo4j` and stopped with `systemctl stop neo4j`. For other systems, please see the Neo4j documentation (https://neo4j.com/docs/operations-manual/current/installation/).
-On linux-based systems the postgres server should be running in the background once installed. If needed, it can be manually restarted with `systemctl restart postgresql` and stopped with `systemctl stop postgresql`. For other systems, please see the postgres documentation (https://www.postgresql.org/docs/current/app-pg-ctl.html)
+On linux-based systems the Neo4j server can be launched with `systemctl start neo4j` restarted with `systemctl restart neo4j` and stopped with `systemctl stop neo4j`. For other systems, please see the [Neo4j documentation](https://neo4j.com/docs/operations-manual/current/installation/).
+On linux-based systems the postgres server should be running in the background once installed. If needed, it can be manually restarted with `systemctl restart postgresql` and stopped with `systemctl stop postgresql`. For other systems, please see the [postgres documentation](https://www.postgresql.org/docs/current/app-pg-ctl.html)
 On all systems, once installed duckDB should be permanently accessible in the background. No starting/restarting/stopping should be necessary.
 
 To choose the query you want to run, specify its id as argument to the option `--query`. As of now, the queries available are :

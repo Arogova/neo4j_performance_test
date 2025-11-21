@@ -105,7 +105,6 @@ func executeDuckDBQuery(ctx context.Context, db *sql.DB, queryString string, res
 	startTime := time.Now()
 	rows, err := db.QueryContext(ctx, queryString)
 	endTime := time.Now()
-	defer rows.Close()
 	if err != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
 		resChan <- QueryResult{QExecTime: -1, Found: false}
 		return
@@ -118,6 +117,7 @@ func executeDuckDBQuery(ctx context.Context, db *sql.DB, queryString string, res
 			resChan <- QueryResult{QExecTime: int(endTime.Sub(startTime).Milliseconds()), Found: false}
 		}
 	}
+	defer rows.Close()
 }
 
 func SetUpDB(ctx context.Context, db interface{}, createGraphQuery []string, n int) {
